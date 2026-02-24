@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduTrack - Student Management System{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'gradient': 'gradient 15s ease infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideIn: {
+                            'from': { 
+                                opacity: '0', 
+                                transform: 'translateX(-20px)' 
+                            },
+                            'to': { 
+                                opacity: '1', 
+                                transform: 'translateX(0)' 
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        /* Custom animations and effects */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-pulse-custom {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .animate-gradient {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6b46c1, #805ad5);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        .animate-slide-right {
+            animation: slideInRight 0.3s ease forwards;
+        }
+        
+        /* Navbar glass effect */
+        .navbar-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+        }
+        
+        /* Nav link styles */
+        .nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.75rem;
+            color: #4b5563;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.1;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-link:hover::before {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-link.active i {
+            color: white;
+        }
+        
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast animation */
+        .toast {
+            animation: slideInRight 0.3s ease forwards;
+        }
+        
+        /* Card hover effects */
+        .hover-card {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Logout Confirmation Modal */
+        .modal-scale-enter {
+            transform: scale(0);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .modal-scale-enter-active {
+            transform: scale(1);
+        }
+        
+        .modal-scale-exit {
+            transform: scale(1);
+            transition: transform 0.3s ease-in;
+        }
+        
+        .modal-scale-exit-active {
+            transform: scale(0);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-indigo-50/20 to-purple-50/20 font-sans antialiased min-h-screen">
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] hidden items-center justify-center">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600 font-medium animate-pulse">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-[9998] space-y-3"></div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] hidden items-center justify-center">
+        <div class="bg-white rounded-3xl p-8 max-w-md mx-4 transform scale-0 transition-transform duration-300" id="logoutModalContent">
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="fas fa-sign-out-alt text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Logout Confirmation</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to logout? You'll need to login again to access your courses.</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeLogoutModal()" class="px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-medium">
+                        Cancel
+                    </button>
+                    <a href="{% url 'logout' %}" class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:shadow-lg transition-all font-medium">
+                        Yes, Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar-glass sticky top-0 z-50 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between h-16 lg:h-20">
+                <!-- Left section: Logo & Mobile Menu -->
+                <div class="flex items-center gap-3">
+                    <!-- Mobile menu button -->
+                    <button id="mobileMenuBtn" class="lg:hidden w-10 h-10 flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- Logo -->
+                    <a href="{% url 'student_dashboard' %}" class="flex items-center gap-2.5 group">
+                        <div class="relative">
+                            <div class="w-10 h-10 lg:w-11 lg:h-11 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-graduation-cap text-white text-lg lg:text-xl"></i>
+                            </div>
+                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></span>
+                        </div>
+                        <div class="hidden sm:block">
+                            <h1 class="text-lg lg:text-xl font-bold gradient-text">EduTrack</h1>
+                            <p class="text-xs text-gray-500">Student Portal</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden lg:flex items-center gap-1 bg-white/60 backdrop-blur-sm rounded-2xl p-1.5 shadow-sm border border-indigo-100/50">
+                    <a href="{% url 'student_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
+                        <i class="fas fa-home text-lg"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'course' %}" class="nav-link {% if request.resolver_match.url_name == 'course' %}active{% endif %}">
+                        <i class="fas fa-book-open text-lg"></i>
+                        <span>My Courses</span>
+                    </a>
+                    <a href="{% url 'add_course' %}" class="nav-link {% if request.resolver_match.url_name == 'add_course' %}active{% endif %}">
+                        <i class="fas fa-plus-circle text-lg"></i>
+                        <span>Add Course</span>
+                    </a>
+                    <a href="{% url 'purchase_course' %}" class="nav-link {% if request.resolver_match.url_name == 'purchase_course' %}active{% endif %} relative">
+                        <i class="fas fa-shopping-cart text-lg"></i>
+                        <span>Purchase</span>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">3</span>
+                    </a>
+                    <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                        <i class="fas fa-user-circle text-lg"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <!-- Right section -->
+                <div class="flex items-center gap-2">
+                    <!-- Search (Desktop) -->
+                    <div class="hidden lg:block relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" placeholder="Search courses..." 
+                               class="pl-9 pr-4 py-2 bg-white/70 backdrop-blur-sm border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all w-64">
+                    </div>
+
+                    <!-- Notifications -->
+                    <button id="notificationBtn" class="relative w-10 h-10 flex items-center justify-center hover:bg-indigo-50 rounded-xl transition-all group">
+                        <i class="fas fa-bell text-gray-600 group-hover:text-indigo-600 text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">3</span>
+                    </button>
+
+                    <!-- Messages -->
+                    <button class="relative w-10 h-10 hidden lg:flex items-center justify-center hover:bg-indigo-50 rounded-xl transition-all group">
+                        <i class="fas fa-envelope text-gray-600 group-hover:text-indigo-600 text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">5</span>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative" id="profileDropdown">
+                        <button id="profileBtn" class="flex items-center gap-3 pl-2 pr-3 py-2 hover:bg-indigo-50 rounded-xl transition-all group">
+                            <div class="relative">
+                                {% if user.profile_pic %}
+                                    <img src="{{ user.profile_pic.url }}" alt="Profile" class="w-9 h-9 rounded-xl object-cover border-2 border-white shadow-md">
+                                {% else %}
+                                    <div class="w-9 h-9 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md">
+                                        {% if user.first_name %}{{ user.first_name|first }}{% else %}{{ user.username|first|upper }}{% endif %}
+                                    </div>
+                                {% endif %}
+                                <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                            </div>
+                            <div class="hidden lg:block text-left">
+                                <p class="text-sm font-semibold text-gray-800">{{ user.get_full_name|default:user.username }}</p>
+                                <p class="text-xs text-gray-500 flex items-center gap-1">
+                                    <i class="fas fa-id-card text-indigo-400 text-[10px]"></i>
+                                    {% if user.student_id %}{{ user.student_id }}{% else %}STU001{% endif %}
+                                </p>
+                            </div>
+                            <i class="fas fa-chevron-down text-xs text-gray-400 hidden lg:block transition-transform group-hover:rotate-180"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden opacity-0 translate-y-0 transition-all duration-300 z-50">
+                            <!-- User Info -->
+                            <div class="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-2xl border-b border-gray-100">
+                                <p class="font-semibold text-gray-900">{{ user.get_full_name|default:user.username }}</p>
+                                <p class="text-xs text-gray-600">{{ user.email|default:'user@example.com' }}</p>
+                            </div>
+                            
+                            <!-- Menu Items -->
+                            <div class="p-2">
+                                <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-user-circle text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">My Profile</span>
+                                    <span class="text-xs text-gray-400">View</span>
+                                </a>
+                                
+                                <a href="{% url 'course' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-book-open text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">My Courses</span>
+                                    <span class="bg-indigo-100 text-indigo-600 text-xs px-2 py-0.5 rounded-full">18</span>
+                                </a>
+                                
+                                <a href="{% url 'add_course' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-plus-circle text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">Add Course</span>
+                                </a>
+                                
+                                <a href="{% url 'purchase_course' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-shopping-cart text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">Purchase</span>
+                                    <span class="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full">3</span>
+                                </a>
+                                
+                                <hr class="my-2 border-gray-100">
+                                
+                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-clock text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">Schedule</span>
+                                </a>
+                                
+                                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                                    <i class="fas fa-certificate text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1">Certificates</span>
+                                    <span class="bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full">3 New</span>
+                                </a>
+                                
+                                <hr class="my-2 border-gray-100">
+                                
+                                <!-- Logout button with modal trigger -->
+                                <button onclick="showLogoutModal()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all group">
+                                    <i class="fas fa-sign-out-alt w-5 group-hover:scale-110 transition-transform"></i>
+                                    <span class="flex-1 text-left">Logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-64 h-full bg-white z-50 shadow-2xl lg:hidden">
+        <div class="p-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-white"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold gradient-text">EduTrack</h2>
+                    <p class="text-xs text-gray-500">Student Portal</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <div class="space-y-1">
+                <a href="{% url 'student_dashboard' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all {% if request.resolver_match.url_name == 'student_dashboard' %}bg-indigo-50 text-indigo-600{% endif %}">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="{% url 'course' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all {% if request.resolver_match.url_name == 'course' %}bg-indigo-50 text-indigo-600{% endif %}">
+                    <i class="fas fa-book-open w-5"></i>
+                    <span>My Courses</span>
+                    <span class="ml-auto bg-indigo-100 text-indigo-600 text-xs px-2 py-0.5 rounded-full">18</span>
+                </a>
+                
+                <a href="{% url 'add_course' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all {% if request.resolver_match.url_name == 'add_course' %}bg-indigo-50 text-indigo-600{% endif %}">
+                    <i class="fas fa-plus-circle w-5"></i>
+                    <span>Add Course</span>
+                </a>
+                
+                <a href="{% url 'purchase_course' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all {% if request.resolver_match.url_name == 'purchase_course' %}bg-indigo-50 text-indigo-600{% endif %}">
+                    <i class="fas fa-shopping-cart w-5"></i>
+                    <span>Purchase</span>
+                    <span class="ml-auto bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+                </a>
+                
+                <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all {% if request.resolver_match.url_name == 'profile' %}bg-indigo-50 text-indigo-600{% endif %}">
+                    <i class="fas fa-user-circle w-5"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+            
+            <hr class="my-4 border-gray-100">
+            
+            <div class="space-y-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all">
+                    <i class="fas fa-clock w-5"></i>
+                    <span>Schedule</span>
+                </a>
+                
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all">
+                    <i class="fas fa-certificate w-5"></i>
+                    <span>Certificates</span>
+                    <span class="ml-auto bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full">3</span>
+                </a>
+                
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+            
+            <div class="absolute bottom-4 left-4 right-4">
+                <!-- Mobile logout button with modal trigger -->
+                <button onclick="showLogoutModal()" class="w-full flex items-center gap-3 px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Logout</span>
+                </button>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-xs text-gray-400">© 2024 EduTrack</p>
+                    <p class="text-xs text-gray-400">v2.1.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="menuOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <!-- Page Header -->
+        {% block page_header %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                        {% block page_title %}Dashboard{% endblock %}
+                    </h1>
+                    <p class="text-gray-500 text-sm mt-1">
+                        {% block page_subtitle %}Welcome back, {{ user.first_name|default:user.username }}! Ready to continue learning?{% endblock %}
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    {% block page_actions %}{% endblock %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+
+        <!-- Content Block -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            {% block content %}
+            <!-- Default content -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 text-center border border-indigo-100/50">
+                <div class="w-20 h-20 mx-auto bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to EduTrack</h2>
+                <p class="text-gray-500">Select a section from the navigation menu to get started.</p>
+            </div>
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button id="fabButton" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-2xl hover:shadow-3xl flex items-center justify-center text-white text-2xl transition-all hover:scale-110 hover:rotate-90 z-40">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Quick Action Menu -->
+    <div id="fabMenu" class="fixed bottom-24 right-6 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 z-40 hidden">
+        <div class="p-2">
+            <p class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Quick Actions</p>
+            
+            <a href="{% url 'add_course' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                <i class="fas fa-plus-circle text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                <span class="flex-1">Add Course</span>
+                <i class="fas fa-arrow-right text-xs text-gray-400 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            
+            <a href="{% url 'purchase_course' %}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                <i class="fas fa-shopping-cart text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                <span class="flex-1">Browse Courses</span>
+                <i class="fas fa-arrow-right text-xs text-gray-400 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-all group">
+                <i class="fas fa-calendar text-indigo-500 w-5 group-hover:scale-110 transition-transform"></i>
+                <span class="flex-1">View Schedule</span>
+                <i class="fas fa-arrow-right text-xs text-gray-400 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Loading Overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').classList.add('flex');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('loadingOverlay').classList.remove('flex');
+        }
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('hidden');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        mobileMenuBtn?.addEventListener('click', toggleMobileMenu);
+        menuOverlay?.addEventListener('click', toggleMobileMenu);
+
+        // Profile Dropdown
+        const profileBtn = document.getElementById('profileBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        profileBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('hidden');
+            dropdownMenu.classList.toggle('opacity-0');
+            dropdownMenu.classList.toggle('translate-y-0');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!profileBtn?.contains(e.target) && !dropdownMenu?.contains(e.target)) {
+                dropdownMenu.classList.add('hidden', 'opacity-0');
+                dropdownMenu.classList.remove('translate-y-0');
+            }
+        });
+
+        // FAB Menu
+        const fabButton = document.getElementById('fabButton');
+        const fabMenu = document.getElementById('fabMenu');
+
+        fabButton?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fabMenu.classList.toggle('hidden');
+            fabButton.classList.toggle('rotate-90');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!fabButton?.contains(e.target) && !fabMenu?.contains(e.target)) {
+                fabMenu.classList.add('hidden');
+                fabButton.classList.remove('rotate-90');
+            }
+        });
+
+        // Toast Notification Function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const colors = {
+                success: 'bg-green-50 border-green-200 text-green-800',
+                error: 'bg-red-50 border-red-200 text-red-800',
+                warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+                info: 'bg-indigo-50 border-indigo-200 text-indigo-800'
+            };
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            toast.className = `toast flex items-center gap-3 p-4 rounded-xl border ${colors[type]} shadow-lg mb-3`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]} text-lg"></i>
+                <p class="flex-1 text-sm font-medium">${message}</p>
+                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Notification button click
+        document.getElementById('notificationBtn')?.addEventListener('click', () => {
+            showToast('You have 3 new notifications', 'info');
+        });
+
+        // Logout Modal Functions
+        function showLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            const modalContent = document.getElementById('logoutModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-0');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            const modalContent = document.getElementById('logoutModalContent');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('logoutModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogoutModal();
+            }
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLogoutModal();
+            }
+        });
+
+        // Active link handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.href === window.location.href) {
+                link.classList.add('active');
+            }
+        });
+
+        // Form submit loading
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', showLoading);
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

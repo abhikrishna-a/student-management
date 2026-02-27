@@ -82,7 +82,7 @@
         </div>
         {% endif %}
 
-        <form method="POST" enctype="multipart/form-data" id="registrationForm">
+        <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data" id="registrationForm">
             {% csrf_token %}
 
             <!-- STEP 1: Personal Information -->

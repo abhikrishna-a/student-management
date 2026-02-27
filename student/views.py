@@ -8,8 +8,7 @@ from principal.models import AddOnCourse
 
 
 def landing_view(request):
-    return render(request, 'landing.html')
-
+    return render(request, 'student/landing.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -17,8 +16,12 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f'Welcome back, {user.first_name}!')
-            return redirect('student_dashboard')
+            name = user.first_name or user.username
+            messages.success(request, f'Welcome back, {name}!')
+            if user.role == 'PRINCIPAL':
+                return redirect('principal_dashboard')
+            else:
+                return redirect('student_dashboard')
         else:
             messages.error(request, 'Invalid username or password.')
     else:

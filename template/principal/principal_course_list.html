@@ -1,0 +1,193 @@
+{% extends 'principal/principal_base.html' %}
+
+{% block title %}View Courses - Principal Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .course-row { transition: all 0.2s ease; }
+    .course-row:hover td { background: #f8fafc; }
+    .search-input:focus { box-shadow: 0 0 0 3px rgba(100,116,139,0.15); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-slate-900">View Courses</h1>
+        <p class="text-slate-500 text-sm mt-1">Manage and view all registered courses</p>
+    </div>
+    <a href="{% url 'add_course' %}"
+       class="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors">
+        <i class="bi bi-plus-lg"></i> Add Course
+    </a>
+</div>
+
+<div class="dashboard-card p-4 mb-8">
+    <form method="GET" action="{% url 'view_courses' %}">
+        <div class="flex gap-3">
+            <div class="relative flex-1">
+                <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text"
+                       name="q"
+                       value="{{ search_query|default:'' }}"
+                       placeholder="Search courses by name, ID, or description..."
+                       class="search-input w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 transition-all bg-white">
+            </div>
+            <div class="relative">
+                <select name="dept"
+                        onchange="this.form.submit()"
+                        class="pl-4 pr-10 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 bg-white appearance-none cursor-pointer transition-all min-w-[160px]">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.pk }}" {% if dept_filter == dept.pk|stringformat:'s' %}selected{% endif %}>
+                        {{ dept.dept_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+            </div>
+            <button type="submit"
+                    class="flex items-center gap-2 px-6 py-3 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors">
+                <i class="bi bi-search"></i> Search
+            </button>
+            {% if search_query or dept_filter %}
+            <a href="{% url 'view_courses' %}"
+               class="flex items-center gap-2 px-4 py-3 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors">
+                <i class="bi bi-x-lg"></i> Clear
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="dashboard-card overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+            <i class="bi bi-journal-bookmark-fill text-slate-700 text-xl"></i>
+            <div>
+                <h3 class="text-base font-bold text-slate-900">All Registered Courses</h3>
+                {% if search_query %}
+                <p class="text-xs text-slate-500">Results for "{{ search_query }}"</p>
+                {% endif %}
+            </div>
+        </div>
+        <span class="px-4 py-1.5 bg-slate-100 text-slate-700 text-sm font-bold rounded-full">
+            {{ total }} course{{ total|pluralize }}
+        </span>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="principal-table">
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Department</th>
+                    <th>Price</th>
+                    <th>Enrolled</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr class="course-row">
+                    <td>
+                        <span class="text-sm font-mono bg-slate-100 px-3 py-1 rounded-lg text-slate-700 font-semibold">
+                            {{ course.course_id|default:"—" }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-journal-text text-slate-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-slate-900 text-sm block">{{ course.course_name }}</span>
+                                {% if course.course_description %}
+                                <span class="text-xs text-slate-400 block max-w-[240px] truncate">
+                                    {{ course.course_description|truncatechars:55 }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if course.department %}
+                            <span class="badge badge-slate">{{ course.department.dept_name|upper }}</span>
+                        {% else %}
+                            <span class="text-slate-400 text-xs">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="text-sm font-bold text-slate-800">₹{{ course.course_price|default:"0" }}</span>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-slate-700">{{ course.enrolled_count|default:"0" }}</span>
+                            <span class="text-xs text-slate-400">students</span>
+                        </div>
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url 'delete_course' course.pk %}"
+                              onsubmit="return confirm('Delete \'{{ course.course_name }}\'? This cannot be undone.');">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="inline-flex items-center gap-1 px-3 py-2 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="text-center py-16">
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="bi bi-journal-x text-slate-400 text-2xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-slate-500 mb-1">No courses found</h4>
+                            <p class="text-sm text-slate-400">
+                                {% if search_query %}No results for "{{ search_query }}" — try a different search
+                                {% else %}No courses have been added yet{% endif %}
+                            </p>
+                            {% if search_query %}
+                            <a href="{% url 'view_courses' %}"
+                               class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-colors">
+                                <i class="bi bi-x"></i> Clear Search
+                            </a>
+                            {% else %}
+                            <a href="{% url 'add_course' %}"
+                               class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-colors">
+                                <i class="bi bi-plus-lg"></i> Add First Course
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if courses %}
+    <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <p class="text-xs text-slate-500">
+            Showing <span class="font-semibold text-slate-700">{{ total }}</span> course{{ total|pluralize }}
+            {% if search_query %}matching "{{ search_query }}"{% endif %}
+        </p>
+        <div class="flex items-center gap-4 text-xs text-slate-500">
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 bg-slate-700 rounded-full"></span>
+                {{ total_active_courses }} active
+            </span>
+            <span class="flex items-center gap-1">
+                <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
+                {{ total_inactive_courses }} inactive
+            </span>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

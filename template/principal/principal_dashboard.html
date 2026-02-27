@@ -1,0 +1,336 @@
+{% extends 'principal/principal_base.html' %}
+
+{% block title %}Principal Dashboard - Student Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar {
+        width: 2.5rem; height: 2.5rem;
+        border-radius: 50%;
+        background: #e2e8f0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; font-weight: 700; color: #475569;
+        flex-shrink: 0;
+    }
+    .course-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+    .course-item:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .pending-row td { transition: background 0.2s ease; }
+    .pending-row:hover td { background: #fffbeb !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="bg-slate-900 rounded-2xl p-8 mb-8 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-white bg-opacity-10 rounded-xl flex items-center justify-center border border-white border-opacity-20 flex-shrink-0">
+            <i class="bi bi-person-badge text-white text-2xl"></i>
+        </div>
+        <div>
+            <p class="text-slate-400 text-sm mb-1">Welcome back,</p>
+            <h2 class="text-2xl font-bold text-white">
+                {{ user.get_full_name|default:user.username }}
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">Principal Portal — manage students and course approvals</p>
+        </div>
+    </div>
+    <div class="hidden sm:flex items-center gap-6 text-right">
+        <div>
+            <div class="text-3xl font-bold text-white">{{ pending_count }}</div>
+            <div class="text-slate-400 text-xs">Pending Approvals</div>
+        </div>
+        <div class="w-px h-12 bg-slate-700"></div>
+        <div>
+            <div class="text-3xl font-bold text-white">{{ total_students }}</div>
+            <div class="text-slate-400 text-xs">Total Students</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+    <div class="stat-card blue p-5 rounded-xl relative overflow-hidden">
+        <span class="stat-badge">↑ 12%</span>
+        <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-number">{{ total_students }}</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+
+    <div class="stat-card green p-5 rounded-xl relative overflow-hidden">
+        <span class="stat-badge">— 0%</span>
+        <div class="stat-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+        <div class="stat-number">{{ total_courses }}</div>
+        <div class="stat-label">Total Courses</div>
+    </div>
+
+    <div class="stat-card amber p-5 rounded-xl relative overflow-hidden">
+        <span class="stat-badge">↑ 5%</span>
+        <div class="stat-icon"><i class="bi bi-building"></i></div>
+        <div class="stat-number">{{ total_departments }}</div>
+        <div class="stat-label">Departments</div>
+    </div>
+
+    <div class="stat-card red p-5 rounded-xl relative overflow-hidden">
+        <span class="stat-badge">↑ 8%</span>
+        <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+        <div class="stat-number">{{ pending_count }}</div>
+        <div class="stat-label">Pending Requests</div>
+    </div>
+
+</div>
+
+<!-- Main Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- Left: Pending Approvals + Approval Stats -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- Pending Approvals Table -->
+        <div class="dashboard-card rounded-xl overflow-hidden">
+            <div class="section-heading">
+                <div class="section-heading-icon bg-amber-100">
+                    <i class="bi bi-hourglass-split text-amber-600"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-bold text-slate-900">Pending Course Approvals</h3>
+                    <p class="text-xs text-amber-600 font-medium">
+                        Action required for {{ pending_count }} request{{ pending_count|pluralize }}
+                    </p>
+                </div>
+                {% if pending_count %}
+                <span class="w-8 h-8 bg-amber-500 text-white text-sm font-bold rounded-full flex items-center justify-center">
+                    {{ pending_count }}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="principal-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Reg No</th>
+                            <th>Dept</th>
+                            <th>Course</th>
+                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in pending_requests %}
+                        <tr class="pending-row">
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <div class="avatar">{{ req.student.first_name|first|upper }}</div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900 text-sm">
+                                            {{ req.student.first_name }} {{ req.student.last_name }}
+                                        </p>
+                                        <p class="text-xs text-slate-400">{{ req.student.email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-xs font-mono bg-slate-100 px-2 py-1 rounded-md text-slate-700">
+                                    {{ req.student.std_reg_no|default:"—" }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-blue">{{ req.student.std_dept|default:"—" }}</span>
+                            </td>
+                            <td>
+                                <p class="font-semibold text-slate-900 text-sm">{{ req.course.course_name }}</p>
+                                <p class="text-xs text-slate-400">ID: {{ req.course.course_id }}</p>
+                            </td>
+                            <td>
+                                <span class="font-bold text-slate-900">₹{{ req.course.course_price }}</span>
+                            </td>
+                            <td>
+                                <p class="text-sm text-slate-700">{{ req.purchased_at|date:"d M Y" }}</p>
+                                <p class="text-xs text-slate-400">{{ req.purchased_at|timesince }} ago</p>
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <form method="POST" action="{% url 'approve_course' req.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-approve" title="Approve">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{% url 'reject_course' req.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-reject" title="Reject">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="bi bi-check-all text-green-500 text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-slate-600 mb-1">All caught up!</h4>
+                                    <p class="text-sm text-slate-400">No pending course approval requests.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Approval Overview -->
+        <div class="dashboard-card rounded-xl p-6">
+            <h3 class="text-base font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <i class="bi bi-bar-chart-line text-slate-500"></i> Approval Overview
+            </h3>
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="text-center p-4 bg-green-50 rounded-xl border border-green-100">
+                    <div class="text-2xl font-bold text-green-700">{{ total_approved }}</div>
+                    <div class="text-xs text-green-600 font-semibold mt-1">Approved</div>
+                </div>
+                <div class="text-center p-4 bg-amber-50 rounded-xl border border-amber-100">
+                    <div class="text-2xl font-bold text-amber-700">{{ pending_count }}</div>
+                    <div class="text-xs text-amber-600 font-semibold mt-1">Pending</div>
+                </div>
+                <div class="text-center p-4 bg-red-50 rounded-xl border border-red-100">
+                    <div class="text-2xl font-bold text-red-700">{{ total_rejected }}</div>
+                    <div class="text-xs text-red-600 font-semibold mt-1">Rejected</div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-500 flex items-center gap-1">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span> Approved
+                        </span>
+                        <span class="font-bold text-slate-700">{{ total_approved }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full"
+                             style="width: {% if total_requests %}{% widthratio total_approved total_requests 100 %}%{% else %}0%{% endif %}"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-500 flex items-center gap-1">
+                            <span class="w-2 h-2 bg-amber-500 rounded-full"></span> Pending
+                        </span>
+                        <span class="font-bold text-slate-700">{{ pending_count }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-amber-500 h-2 rounded-full"
+                             style="width: {% if total_requests %}{% widthratio pending_count total_requests 100 %}%{% else %}0%{% endif %}"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-500 flex items-center gap-1">
+                            <span class="w-2 h-2 bg-red-500 rounded-full"></span> Rejected
+                        </span>
+                        <span class="font-bold text-slate-700">{{ total_rejected }}</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div class="bg-red-500 h-2 rounded-full"
+                             style="width: {% if total_requests %}{% widthratio total_rejected total_requests 100 %}%{% else %}0%{% endif %}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-6">
+
+        <!-- Recent Students -->
+        <div class="dashboard-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-base font-bold text-slate-900">Recent Students</h3>
+                <a href="{% url 'view_students' %}" class="text-xs text-slate-500 hover:text-slate-900 transition-colors">
+                    View all <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="space-y-2">
+                {% for student in recent_students %}
+                <a href="{% url 'student_detail' student.pk %}"
+                   class="flex items-center gap-3 p-2.5 hover:bg-slate-50 rounded-xl transition-colors group">
+                    <div class="avatar flex-shrink-0">{{ student.first_name|first|upper }}</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-slate-900 truncate group-hover:text-slate-700">
+                            {{ student.first_name }} {{ student.last_name }}
+                        </p>
+                        <p class="text-xs text-slate-400 truncate">
+                            {{ student.std_dept.dept_name|default:"No dept" }}
+                        </p>
+                    </div>
+                    <span class="badge badge-slate text-xs flex-shrink-0">
+                        {{ student.std_reg_no|default:"—" }}
+                    </span>
+                </a>
+                {% empty %}
+                <div class="text-center py-6">
+                    <i class="bi bi-people text-slate-300 text-3xl mb-2 block"></i>
+                    <p class="text-sm text-slate-400">No students yet</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'view_students' %}"
+               class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                <i class="bi bi-people"></i> All Students
+            </a>
+        </div>
+
+        <!-- Recent Courses -->
+        <div class="dashboard-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-base font-bold text-slate-900">Recent Courses</h3>
+                <a href="{% url 'view_courses' %}" class="text-xs text-slate-500 hover:text-slate-900 transition-colors">
+                    View all <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="space-y-2">
+                {% for course in recent_courses %}
+                <div class="course-item p-3 flex items-center gap-3">
+                    <div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="bi bi-book text-slate-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-slate-900 truncate">{{ course.course_name }}</p>
+                        <p class="text-xs text-slate-400">{{ course.department.dept_name|default:"General" }}</p>
+                    </div>
+                    <span class="text-sm font-bold text-slate-900 flex-shrink-0">₹{{ course.course_price }}</span>
+                </div>
+                {% empty %}
+                <div class="text-center py-6">
+                    <i class="bi bi-journal-x text-slate-300 text-3xl mb-2 block"></i>
+                    <p class="text-sm text-slate-400">No courses yet</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'add_course' %}"
+               class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">
+                <i class="bi bi-plus-circle"></i> Add New Course
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

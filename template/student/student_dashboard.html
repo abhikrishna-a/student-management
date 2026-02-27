@@ -1,613 +1,343 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Dashboard - EduTrack{% endblock %}
+{% block title %}Student Dashboard - Student Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    .dashboard-card:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+        transform: translateY(-2px);
+    }
+    .stat-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        border-color: #0f172a;
+        box-shadow: 0 10px 15px -3px rgba(15,23,42,0.1);
+    }
+    .course-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+    }
+    .course-item:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .badge {
+        background: #f1f5f9;
+        color: #334155;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        font-weight: 500;
+    }
+    .badge.success { background: #dcfce7; color: #166534; }
+    .badge.warning { background: #fef9c3; color: #854d0e; }
+    .badge.danger  { background: #fee2e2; color: #991b1b; }
+    .progress-bar {
+        background: #e2e8f0;
+        border-radius: 9999px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        background: #0f172a;
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block page_title %}Student Dashboard{% endblock %}
+{% block page_subtitle %}Track your progress and manage courses{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
-    
-    <!-- Decorative Background Elements -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+<!-- Welcome Banner -->
+<div class="bg-slate-900 rounded-2xl p-8 mb-8 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-white bg-opacity-10 rounded-full flex items-center justify-center border border-white border-opacity-20">
+            <i class="bi bi-person-circle text-white text-3xl"></i>
+        </div>
+        <div>
+            <h2 class="text-2xl font-bold text-white">
+                Welcome, {{ request.user.first_name|default:request.user.username }}!
+            </h2>
+            <p class="text-slate-400 text-sm mt-1">
+                {{ student.std_dept|default:"No Department" }} •
+                Year {{ student.std_year_of_admission|default:"—" }}
+            </p>
+        </div>
+    </div>
+    <div class="text-right hidden sm:block">
+        <div class="text-4xl font-bold text-white">{{ approved_courses.count }}</div>
+        <div class="text-slate-400 text-sm">Approved Courses</div>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="stat-card p-5 rounded-xl border-l-4 border-slate-900">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-check-circle text-slate-900 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">Approved</p>
+                <h3 class="text-2xl font-bold text-slate-900">{{ approved_courses.count }}</h3>
+            </div>
+        </div>
     </div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Welcome Section with 3D Effect -->
-        <div class="mb-8 group perspective">
-            <div class="relative transform-gpu transition-all duration-500 group-hover:rotate-x-2 group-hover:scale-105">
-                <!-- Gradient Background with Pattern -->
-                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl opacity-90 blur-xl group-hover:opacity-100 transition-opacity"></div>
-                
-                <!-- Main Banner -->
-                <div class="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl overflow-hidden">
-                    <!-- Animated Pattern Overlay -->
-                    <div class="absolute inset-0 bg-grid-white/[0.2] bg-grid-16"></div>
-                    
-                    <!-- Floating Elements -->
-                    <div class="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
-                    <div class="absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full translate-x-1/3 translate-y-1/3 animate-pulse animation-delay-1000"></div>
-                    
-                    <!-- Content -->
-                    <div class="relative px-8 py-10 sm:px-12 sm:py-12">
-                        <div class="flex flex-col lg:flex-row justify-between items-center gap-8">
-                            <div class="space-y-4 text-center lg:text-left">
-                                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-lg rounded-full px-4 py-2 text-white/90 text-sm">
-                                    <span class="relative flex h-3 w-3">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                                    </span>
-                                    Active Now • Student Dashboard
-                                </div>
-                                
-                                <h1 class="text-4xl lg:text-5xl font-bold text-white">
-                                    Welcome back,
-                                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-pink-200">
-                                        John Doe! 👋
-                                    </span>
-                                </h1>
-                                
-                                <p class="text-indigo-100 text-lg max-w-2xl">
-                                    Track your learning journey, monitor progress, and achieve your educational goals with our comprehensive dashboard.
-                                </p>
-                                
-                                <!-- Quick Stats in Banner -->
-                                <div class="flex flex-wrap gap-6 pt-4 justify-center lg:justify-start">
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-3 bg-white/20 backdrop-blur-lg rounded-2xl">
-                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="text-left">
-                                            <p class="text-2xl font-bold text-white">24</p>
-                                            <p class="text-indigo-200 text-sm">Enrolled Courses</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-3 bg-white/20 backdrop-blur-lg rounded-2xl">
-                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="text-left">
-                                            <p class="text-2xl font-bold text-white">12</p>
-                                            <p class="text-indigo-200 text-sm">Completed</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- 3D Card Element -->
-                            <div class="hidden lg:block w-64 h-64 bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20 transform rotate-3 hover:rotate-0 transition-all duration-500">
-                                <div class="text-center">
-                                    <div class="w-24 h-24 mx-auto bg-gradient-to-br from-yellow-400 to-pink-500 rounded-2xl flex items-center justify-center text-4xl mb-4">
-                                        📚
-                                    </div>
-                                    <h3 class="text-white font-bold text-xl mb-2">85%</h3>
-                                    <p class="text-indigo-200 text-sm">Overall Progress</p>
-                                    <div class="w-full h-2 bg-white/20 rounded-full mt-4">
-                                        <div class="w-[85%] h-full bg-gradient-to-r from-yellow-400 to-pink-500 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="stat-card p-5 rounded-xl border-l-4 border-slate-400">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-hourglass-split text-slate-600 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs text-slate-500">Pending</p>
+                <h3 class="text-2xl font-bold text-slate-900">{{ pending_courses.count }}</h3>
             </div>
         </div>
+    </div>
 
-        <!-- Stats Cards Grid with Glassmorphism -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Approved Courses -->
-            <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-bl-full"></div>
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl shadow-lg shadow-emerald-500/30">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">Approved</span>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-1">18</h3>
-                    <p class="text-gray-500 text-sm">Approved Courses</p>
-                    <div class="mt-4 flex items-center text-sm text-emerald-600">
-                        <span class="font-semibold">↑ 12%</span>
-                        <span class="text-gray-400 ml-2">from last month</span>
-                    </div>
-                </div>
+    <div class="stat-card p-5 rounded-xl border-l-4 border-slate-300">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-x-circle text-slate-500 text-xl"></i>
             </div>
-
-            <!-- Pending Courses -->
-            <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-bl-full"></div>
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl shadow-lg shadow-yellow-500/30">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full">Pending</span>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-1">4</h3>
-                    <p class="text-gray-500 text-sm">Pending Approval</p>
-                    <div class="mt-4 flex items-center text-sm text-yellow-600">
-                        <span class="font-semibold">↑ 2</span>
-                        <span class="text-gray-400 ml-2">awaiting review</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rejected Courses -->
-            <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-bl-full"></div>
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl shadow-lg shadow-red-500/30">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-red-600 bg-red-100 px-3 py-1 rounded-full">Rejected</span>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-1">2</h3>
-                    <p class="text-gray-500 text-sm">Rejected Courses</p>
-                    <div class="mt-4 flex items-center text-sm text-red-600">
-                        <span class="font-semibold">↓ 1</span>
-                        <span class="text-gray-400 ml-2">need revision</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Spent -->
-            <div class="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20 overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full"></div>
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl shadow-lg shadow-blue-500/30">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Spent</span>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-800 mb-1">₹24,500</h3>
-                    <p class="text-gray-500 text-sm">Total Investment</p>
-                    <div class="mt-4 flex items-center text-sm text-blue-600">
-                        <span class="font-semibold">8 courses</span>
-                        <span class="text-gray-400 ml-2">this semester</span>
-                    </div>
-                </div>
+            <div>
+                <p class="text-xs text-slate-500">Rejected</p>
+                <h3 class="text-2xl font-bold text-slate-900">{{ rejected_courses.count }}</h3>
             </div>
         </div>
+    </div>
 
-        <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Approved Courses Table (2/3 width) -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Section Header -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-lg">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                        </div>
-                        <h2 class="text-2xl font-bold text-gray-800">My Approved Courses</h2>
-                    </div>
-                    <button class="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl text-sm font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-50 transition-all hover:scale-105 shadow-sm">
-                        View All →
-                    </button>
-                </div>
-
-                <!-- Courses Table with Modern Design -->
-                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gradient-to-r from-gray-50 to-gray-100/50">
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Course</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Department</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Progress</th>
-                                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <!-- Course Row 1 -->
-                                <tr class="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all duration-300">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                                PY
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-gray-800">Python Programming</p>
-                                                <p class="text-xs text-gray-500">Advanced Level</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm font-mono">CS101</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold">Computer Science</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-bold text-emerald-600">₹3,999</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 75%"></div>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-600">75%</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <button class="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-all hover:scale-110" title="Remove">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Course Row 2 -->
-                                <tr class="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all duration-300">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                                DJ
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-gray-800">Django Web Development</p>
-                                                <p class="text-xs text-gray-500">Intermediate Level</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm font-mono">WD202</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Web Development</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-bold text-emerald-600">₹4,999</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 40%"></div>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-600">40%</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <button class="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-all hover:scale-110" title="Remove">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Course Row 3 -->
-                                <tr class="group hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all duration-300">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                                JS
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-gray-800">JavaScript Complete Guide</p>
-                                                <p class="text-xs text-gray-500">Beginner Level</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm font-mono">JS303</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Frontend</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-bold text-emerald-600">₹2,999</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 90%"></div>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-600">90%</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <button class="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-all hover:scale-110" title="Remove">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Table Footer -->
-                    <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100/50 border-t border-gray-200">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm text-gray-600">Showing <span class="font-semibold">3</span> of <span class="font-semibold">18</span> courses</p>
-                            <div class="flex gap-2">
-                                <button class="px-3 py-1 bg-white rounded-lg text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all disabled:opacity-50" disabled>← Prev</button>
-                                <button class="px-3 py-1 bg-white rounded-lg text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">Next →</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="stat-card p-5 rounded-xl border-l-4 border-slate-900">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                <i class="bi bi-currency-rupee text-slate-900 text-xl"></i>
             </div>
-
-            <!-- Right Sidebar (1/3 width) -->
-            <div class="space-y-6">
-                <!-- Pending Courses Card -->
-                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Pending Approval
-                            </h3>
-                            <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">4</span>
-                        </div>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <!-- Pending Course 1 -->
-                        <div class="group relative bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200 hover:shadow-lg transition-all">
-                            <div class="flex items-start gap-3">
-                                <div class="p-2 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-gray-800">Machine Learning Fundamentals</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Requested 2 days ago</p>
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Under Review</span>
-                                        <span class="text-xs text-gray-400">•</span>
-                                        <span class="text-xs text-gray-500">Est. response: 24h</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Course 2 -->
-                        <div class="group relative bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200 hover:shadow-lg transition-all">
-                            <div class="flex items-start gap-3">
-                                <div class="p-2 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-semibold text-gray-800">React Native Development</h4>
-                                    <p class="text-sm text-gray-500 mt-1">Requested 5 days ago</p>
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">Payment Pending</span>
-                                        <span class="text-xs text-gray-400">•</span>
-                                        <span class="text-xs text-gray-500">Amount: ₹4,999</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <button class="w-full text-center text-sm text-yellow-600 hover:text-yellow-700 font-semibold">
-                            View All Pending →
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Rejected Courses Card -->
-                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-                    <div class="bg-gradient-to-r from-red-500 to-pink-500 px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Rejected
-                            </h3>
-                            <span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">2</span>
-                        </div>
-                    </div>
-                    
-                    <div class="p-6 space-y-4">
-                        <!-- Rejected Course 1 -->
-                        <div class="group relative bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-4 border border-red-200 hover:shadow-lg transition-all">
-                            <div class="flex items-start gap-3">
-                                <div class="p-2 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h4 class="font-semibold text-gray-800">Advanced Database Systems</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Rejected on Mar 15, 2024</p>
-                                        </div>
-                                        <button class="p-1 hover:bg-red-200 rounded-lg text-red-500 transition-all" title="Remove">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="mt-2">
-                                        <span class="text-xs bg-red-200 text-red-800 px-2 py-1 rounded-full">Reason: Prerequisites not met</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rejected Course 2 -->
-                        <div class="group relative bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-4 border border-red-200 hover:shadow-lg transition-all">
-                            <div class="flex items-start gap-3">
-                                <div class="p-2 bg-gradient-to-br from-red-500 to-pink-500 rounded-xl text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-start justify-between">
-                                        <div>
-                                            <h4 class="font-semibold text-gray-800">Blockchain Technology</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Rejected on Mar 10, 2024</p>
-                                        </div>
-                                        <button class="p-1 hover:bg-red-200 rounded-lg text-red-500 transition-all" title="Remove">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="mt-2">
-                                        <span class="text-xs bg-red-200 text-red-800 px-2 py-1 rounded-full">Reason: Payment failed</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions Card -->
-                <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-6 text-white">
-                    <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
-                    <div class="space-y-3">
-                        <button class="w-full bg-white/20 backdrop-blur-lg hover:bg-white/30 rounded-xl px-4 py-3 text-left transition-all flex items-center gap-3 group">
-                            <span class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                            </span>
-                            <span class="flex-1">Browse New Courses</span>
-                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                        
-                        <button class="w-full bg-white/20 backdrop-blur-lg hover:bg-white/30 rounded-xl px-4 py-3 text-left transition-all flex items-center gap-3 group">
-                            <span class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </span>
-                            <span class="flex-1">View Schedule</span>
-                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                        
-                        <button class="w-full bg-white/20 backdrop-blur-lg hover:bg-white/30 rounded-xl px-4 py-3 text-left transition-all flex items-center gap-3 group">
-                            <span class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </span>
-                            <span class="flex-1">Check Certificates</span>
-                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Upcoming Deadlines -->
-                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 border border-white/20">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Upcoming Deadlines
-                    </h3>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3 p-3 bg-red-50 rounded-xl">
-                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600 font-bold">15</div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Python Assignment</p>
-                                <p class="text-xs text-gray-500">Due in 2 days</p>
-                            </div>
-                            <span class="text-xs bg-red-500 text-white px-2 py-1 rounded-full">Urgent</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl">
-                            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-600 font-bold">22</div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Django Project</p>
-                                <p class="text-xs text-gray-500">Due in 9 days</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
-                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600 font-bold">30</div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">Final Exam</p>
-                                <p class="text-xs text-gray-500">Due in 17 days</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <p class="text-xs text-slate-500">Total Spent</p>
+                <h3 class="text-2xl font-bold text-slate-900">₹{{ total_spent }}</h3>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Custom Animations -->
-<style>
-@keyframes blob {
-    0%, 100% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-}
+<!-- Main Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-.animate-blob {
-    animation: blob 7s infinite;
-}
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-6">
 
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
+        <!-- Approved Courses -->
+        <div class="dashboard-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-check-circle text-slate-900 text-lg"></i>
+                    <h3 class="text-lg font-semibold text-slate-900">My Approved Courses</h3>
+                </div>
+                <span class="px-3 py-1 bg-slate-900 text-white text-xs font-semibold rounded-full">
+                    {{ approved_courses.count }} courses
+                </span>
+            </div>
 
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
+            <div class="space-y-3">
+                {% for item in approved_courses %}
+                <div class="course-item p-4 border-l-4 border-slate-900">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-book text-slate-700"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">{{ item.course.course_name }}</h4>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide">
+                                    {{ item.course.department|default:"General" }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-slate-900">{{ item.course.formatted_price }}</div>
+                            <span class="badge success text-xs mt-1 inline-block">
+                                <i class="bi bi-check-circle me-1"></i>Approved
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="bi bi-book text-slate-400 text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-600 mb-1">No Approved Courses Yet</h4>
+                    <p class="text-sm text-slate-400 mb-4">You don't have any approved courses yet.</p>
+                    <a href="{% url 'purchase_course' %}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-colors">
+                        <i class="bi bi-cart"></i> Browse Courses
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-.perspective {
-    perspective: 1000px;
-}
+        <!-- Pending Courses -->
+        <div class="dashboard-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-hourglass-split text-slate-600 text-lg"></i>
+                    <h3 class="text-lg font-semibold text-slate-900">Pending Approval</h3>
+                </div>
+                {% if pending_courses.count %}
+                <span class="w-7 h-7 bg-slate-900 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {{ pending_courses.count }}
+                </span>
+                {% endif %}
+            </div>
 
-.rotate-x-2 {
-    transform: rotateX(2deg);
-}
+            <div class="space-y-3">
+                {% for item in pending_courses %}
+                <div class="course-item p-4 border-l-4 border-slate-400">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-hourglass-split text-slate-500 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">{{ item.course.course_name }}</h4>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide">
+                                    {{ item.course.department|default:"General" }}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="badge warning text-xs">
+                            <i class="bi bi-info-circle me-1"></i>Waiting
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-8 bg-slate-50 rounded-xl border border-slate-200">
+                    <i class="bi bi-hourglass text-slate-300 text-3xl mb-2 block"></i>
+                    <p class="text-sm text-slate-400">No pending courses</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-.bg-grid-white {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.2)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-}
+    </div>
 
-.bg-grid-16 {
-    background-size: 16px 16px;
-}
-</style>
+    <!-- Right Column -->
+    <div class="space-y-6">
+
+        <!-- Rejected Courses Card -->
+        <div class="dashboard-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-x-circle text-slate-500 text-lg"></i>
+                    <h3 class="text-lg font-semibold text-slate-900">Rejected Courses</h3>
+                </div>
+                <span class="w-7 h-7 bg-slate-900 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {{ rejected_courses.count }}
+                </span>
+            </div>
+
+            <div class="space-y-3">
+                {% for item in rejected_courses %}
+                <div class="course-item p-4 border-l-4 border-slate-300">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                                <i class="bi bi-x-circle text-slate-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">{{ item.course.course_name }}</h4>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide">
+                                    {{ item.course.department|default:"General" }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-slate-400 line-through">{{ item.course.formatted_price }}</div>
+                            <span class="badge danger text-xs mt-1 inline-block">
+                                <i class="bi bi-x-circle me-1"></i>Rejected
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-100">
+                        <a href="{% url 'purchase_course' %}"
+                           class="text-xs text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors">
+                            <i class="bi bi-arrow-repeat"></i> Request again
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="w-14 h-14 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="bi bi-x-circle text-slate-400 text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-slate-500 mb-1">No Rejected Courses</h4>
+                    <p class="text-xs text-slate-400">All your requests are in good standing.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Purchases -->
+        <div class="dashboard-card rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Purchases</h3>
+            <div class="space-y-3">
+                {% for item in enrolled_courses|slice:":5" %}
+                <div class="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 rounded-full flex-shrink-0
+                        {% if item.status == 'APPROVED' %}bg-slate-900
+                        {% elif item.status == 'PENDING' %}bg-slate-400
+                        {% else %}bg-slate-300{% endif %}">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-900 truncate">{{ item.course.course_name }}</p>
+                        <p class="text-xs text-slate-400">{{ item.purchased_at|date:"d M Y" }}</p>
+                    </div>
+                    <span class="text-xs font-medium
+                        {% if item.status == 'APPROVED' %}text-slate-900
+                        {% elif item.status == 'PENDING' %}text-slate-500
+                        {% else %}text-slate-400{% endif %}">
+                        {{ item.status }}
+                    </span>
+                </div>
+                {% empty %}
+                <div class="text-center py-6">
+                    <i class="bi bi-bag text-slate-300 text-3xl mb-2 block"></i>
+                    <p class="text-sm text-slate-400">No purchases yet</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'purchase_course' %}"
+               class="block text-center text-sm text-slate-500 hover:text-slate-900 mt-4 pt-3 border-t border-slate-100 transition-colors">
+                Browse more courses <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard loaded');
+    });
+</script>
 {% endblock %}

@@ -5,7 +5,8 @@ from django.contrib import messages
 from .models import Student, StudentCourse
 from .forms import StudentRegistrationForm, LoginForm, StudentProfileUpdateForm
 from principal.models import AddOnCourse
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 def landing_view(request):
     return render(request, 'student/landing.html')
@@ -34,6 +35,16 @@ def register_view(request):
         form = StudentRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             student = form.save()
+
+            # Send welcome email
+            send_mail(
+                subject='Welcome to Our Platform',
+                message=f'Hi {student.username},\n\nYour account has been created successfully!',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[student.email],
+                fail_silently=False,
+            )
+
             login(request, student)
             messages.success(request, 'Account created successfully! Welcome!')
             return redirect('student_dashboard')
@@ -43,6 +54,7 @@ def register_view(request):
                     messages.error(request, f'{field}: {error}' if field != '__all__' else error)
     else:
         form = StudentRegistrationForm()
+
     return render(request, 'student/registration.html', {'form': form})
 
 

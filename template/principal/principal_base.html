@@ -3,23 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Student Management System{% endblock %}</title>
-    <!-- Tailwind CSS -->
+    <title>{% block title %}Principal Portal - Student Management System{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Sidebar styles */
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-        
+        * { font-family: 'Inter', sans-serif; }
+
+        .sidebar { transition: all 0.3s ease; }
+
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -30,160 +22,160 @@
             transition: all 0.2s ease;
             margin-bottom: 0.25rem;
         }
-        
-        .sidebar-link:hover {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
-        
-        .sidebar-link.active {
-            background: #0f172a;
-            color: white;
-        }
-        
-        .sidebar-link i {
-            font-size: 1.25rem;
-            width: 1.5rem;
-        }
-        
-        /* Main content area */
-        .main-content {
-            transition: margin-left 0.3s ease;
-        }
-        
-        /* Mobile menu overlay */
+        .sidebar-link:hover { background: #f1f5f9; color: #0f172a; }
+        .sidebar-link.active { background: #0f172a; color: white; }
+        .sidebar-link i { font-size: 1.25rem; width: 1.5rem; }
+
+        .main-content { transition: margin-left 0.3s ease; }
+
         .mobile-menu-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
             z-index: 40;
         }
-        
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        /* Dashboard card styles */
+        .mobile-menu-overlay.active { display: block; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
         .dashboard-card {
             background: white;
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
-        
         .dashboard-card:hover {
             border-color: #94a3b8;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
             transform: translateY(-2px);
         }
-        
+
         .stat-card {
             background: white;
             border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
-        
         .stat-card:hover {
             border-color: #0f172a;
-            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(15,23,42,0.1);
         }
-        
-        .progress-bar {
-            background: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
+
+        /* Colored stat cards */
+        .stat-card.blue  { border-left: 4px solid #3b82f6; }
+        .stat-card.green { border-left: 4px solid #22c55e; }
+        .stat-card.amber { border-left: 4px solid #f59e0b; }
+        .stat-card.red   { border-left: 4px solid #ef4444; }
+
+        .stat-card .stat-icon {
+            width: 3rem; height: 3rem;
+            border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
-        
-        .progress-fill {
-            background: #0f172a;
-            height: 100%;
-            border-radius: 9999px;
-            transition: width 0.3s ease;
+        .stat-card .stat-number {
+            font-size: 2.5rem; font-weight: 800;
+            color: #0f172a; line-height: 1;
+            margin-bottom: 0.25rem;
         }
-        
+        .stat-card .stat-label { font-size: 0.875rem; color: #64748b; font-weight: 500; }
+        .stat-card .stat-badge {
+            position: absolute; top: 1rem; right: 1rem;
+            font-size: 0.7rem; font-weight: 600;
+            padding: 0.2rem 0.5rem; border-radius: 9999px;
+        }
+
+        .stat-card.blue  .stat-icon { background: #eff6ff; color: #3b82f6; }
+        .stat-card.green .stat-icon { background: #f0fdf4; color: #22c55e; }
+        .stat-card.amber .stat-icon { background: #fffbeb; color: #f59e0b; }
+        .stat-card.red   .stat-icon { background: #fef2f2; color: #ef4444; }
+
+        .stat-card.blue  .stat-badge { background: #dbeafe; color: #1d4ed8; }
+        .stat-card.green .stat-badge { background: #dcfce7; color: #15803d; }
+        .stat-card.amber .stat-badge { background: #fef3c7; color: #b45309; }
+        .stat-card.red   .stat-badge { background: #fee2e2; color: #b91c1c; }
+
+        /* Table */
+        .principal-table { width: 100%; border-collapse: collapse; }
+        .principal-table th {
+            background: #f8fafc;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: #64748b; border-bottom: 1px solid #e2e8f0;
+        }
+        .principal-table td {
+            padding: 1rem; border-bottom: 1px solid #f1f5f9;
+            font-size: 0.875rem; color: #334155; vertical-align: middle;
+        }
+        .principal-table tr:hover td { background: #f8fafc; }
+        .principal-table tr:last-child td { border-bottom: none; }
+
+        /* Badges */
         .badge {
-            background: #f1f5f9;
-            color: #334155;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-weight: 500;
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.25rem 0.625rem; border-radius: 9999px;
+            font-size: 0.7rem; font-weight: 600;
         }
-        
-        .badge.success {
-            background: #dcfce7;
-            color: #166534;
+        .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+        .badge-green  { background: #dcfce7; color: #15803d; }
+        .badge-amber  { background: #fef3c7; color: #b45309; }
+        .badge-red    { background: #fee2e2; color: #b91c1c; }
+        .badge-slate  { background: #f1f5f9; color: #334155; }
+
+        /* Action buttons */
+        .btn-approve {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2rem; height: 2rem;
+            background: #22c55e; color: white;
+            border-radius: 0.5rem; border: none; cursor: pointer;
+            transition: all 0.2s ease; font-size: 0.875rem;
         }
-        
-        .badge.warning {
-            background: #fef9c3;
-            color: #854d0e;
+        .btn-approve:hover { background: #16a34a; transform: scale(1.1); }
+
+        .btn-reject {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 2rem; height: 2rem;
+            background: #ef4444; color: white;
+            border-radius: 0.5rem; border: none; cursor: pointer;
+            transition: all 0.2s ease; font-size: 0.875rem;
         }
-        
-        .slate-badge {
-            background: #0f172a;
-            color: white;
-            font-weight: 500;
-            letter-spacing: 0.025em;
+        .btn-reject:hover { background: #dc2626; transform: scale(1.1); }
+
+        /* Section heading */
+        .section-heading {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;
         }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
+        .section-heading-icon {
+            width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
         }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
+
+        /* Progress */
+        .progress-bar { background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
+        .progress-fill { background: #0f172a; height: 100%; border-radius: 9999px; transition: width 0.3s ease; }
 
         /* Loading spinner */
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(15, 23, 42, 0.1);
-            border-radius: 50%;
-            border-top-color: #0f172a;
+            width: 40px; height: 40px;
+            border: 3px solid rgba(15,23,42,0.1);
+            border-radius: 50%; border-top-color: #0f172a;
             animation: spin 1s ease-in-out infinite;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toast animation */
-        .toast {
-            animation: slideInRight 0.3s ease forwards;
-        }
-        
+        /* Toast */
+        .toast { animation: slideInRight 0.3s ease forwards; }
         @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(100px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -201,7 +193,7 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed top-20 right-4 z-[9998] space-y-3"></div>
 
-    <!-- Logout Confirmation Modal -->
+    <!-- Logout Modal -->
     <div id="logoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] hidden items-center justify-center">
         <div class="bg-white rounded-3xl p-8 max-w-md mx-4 transform scale-0 transition-transform duration-300" id="logoutModalContent">
             <div class="text-center">
@@ -209,7 +201,7 @@
                     <i class="bi bi-box-arrow-right text-white text-3xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">Logout Confirmation</h3>
-                <p class="text-gray-600 mb-6">Are you sure you want to logout? You'll need to login again to access your courses.</p>
+                <p class="text-gray-600 mb-6">Are you sure you want to logout from the Principal Portal?</p>
                 <div class="flex gap-3 justify-center">
                     <button onclick="closeLogoutModal()" class="px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-medium">
                         Cancel
@@ -222,7 +214,7 @@
         </div>
     </div>
 
-    <!-- Top Navigation Bar (Simplified) -->
+    <!-- Top Navigation -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -286,87 +278,84 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Overlay -->
     <div id="mobileOverlay" class="mobile-menu-overlay lg:hidden"></div>
 
-    <!-- Sidebar and Main Content Container -->
+    <!-- Sidebar + Main -->
     <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-slate-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto" style="height: calc(100vh - 4rem); top: 4rem;">
+
+        <!-- Sidebar (mobile + desktop) -->
+        <aside id="sidebar"
+               class="sidebar fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-slate-200
+                      transform -translate-x-full lg:translate-x-0
+                      transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto"
+               style="height: calc(100vh - 4rem); top: 4rem;">
             <div class="p-4">
-                <!-- User Info (Mobile only) -->
+
+                <!-- Mobile user info -->
                 <div class="lg:hidden mb-6 pb-4 border-b border-slate-200">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
                             <span class="text-white text-lg font-semibold">
                                 {% if user.is_authenticated %}
                                     {{ user.first_name|first|default:user.username|first|upper }}
-                                {% else %}
-                                    JD
-                                {% endif %}
+                                {% else %}P{% endif %}
                             </span>
                         </div>
                         <div>
                             <p class="font-semibold text-slate-900">
-                                {% if user.is_authenticated %}
-                                    {{ user.get_full_name|default:user.username }}
-                                {% else %}
-                                    Guest
-                                {% endif %}
+                                {% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% else %}Principal{% endif %}
                             </p>
-                            <p class="text-xs text-slate-500">Student</p>
+                            <p class="text-xs text-slate-500">Principal</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sidebar Navigation Links -->
+                <!-- Nav Links -->
                 <nav class="space-y-1">
-                    <a href="{% url 'student_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
-                        <i class="bi bi-house-door"></i>
-                        <span>Dashboard</span>
+                    <a href="{% url 'principal_dashboard' %}"
+                       class="sidebar-link {% if request.resolver_match.url_name == 'principal_dashboard' %}active{% endif %}">
+                        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
                     </a>
-                    
-                    <a href="{% url 'purchase_course' %}" class="sidebar-link {% if request.resolver_match.url_name == 'purchase_course' %}active{% endif %}">
-                        <i class="bi bi-cart"></i>
-                        <span>Purchase Course</span>
-                        {% if purchase_cart_count %}
-                            <span class="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ purchase_cart_count }}</span>
-                        {% endif %}
+                    <a href="{% url 'add_course' %}"
+                       class="sidebar-link {% if request.resolver_match.url_name == 'add_course' %}active{% endif %}">
+                        <i class="bi bi-plus-circle"></i><span>Add Course</span>
                     </a>
-                    
-                    <a href="{% url 'profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                        <i class="bi bi-person"></i>
-                        <span>My Profile</span>
+                    <a href="{% url 'view_courses' %}"
+                       class="sidebar-link {% if request.resolver_match.url_name == 'view_courses' %}active{% endif %}">
+                        <i class="bi bi-journal-bookmark"></i><span>View Courses</span>
+                    </a>
+                    <a href="{% url 'view_students' %}"
+                       class="sidebar-link {% if request.resolver_match.url_name == 'view_students' %}active{% endif %}">
+                        <i class="bi bi-people"></i><span>View Students</span>
                     </a>
                 </nav>
 
-                <!-- Logout Button (Mobile only) -->
+                <!-- Mobile Logout -->
                 <div class="lg:hidden mt-8 pt-4 border-t border-slate-200">
                     <button onclick="showLogoutModal()" class="sidebar-link w-full text-red-600 hover:bg-red-50">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
+                        <i class="bi bi-box-arrow-right"></i><span>Logout</span>
                     </button>
                 </div>
 
-                <!-- Version Info -->
                 <div class="mt-8 text-center">
-                    <p class="text-xs text-slate-400">© 2024 StudentManage</p>
-                    <p class="text-xs text-slate-400">v1.0</p>
+                    <p class="text-xs text-slate-400">© 2024 EduAdmin</p>
+                    <p class="text-xs text-slate-400">Principal Portal v1.0</p>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content flex-1 min-w-0">
-            <!-- Page Header (Optional) -->
-        
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-12">
 
-            <!-- Content Block -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
                 <!-- Django Messages -->
                 {% if messages %}
                     {% for message in messages %}
-                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %} flex items-start gap-3">
+                    <div class="mb-4 p-4 rounded-lg flex items-start gap-3
+                        {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800
+                        {% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800
+                        {% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %}">
                         <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-circle-fill{% else %}bi-info-circle-fill{% endif %} text-lg mt-0.5"></i>
                         <p class="flex-1">{{ message }}</p>
                         <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
@@ -381,149 +370,105 @@
         </main>
     </div>
 
-    <!-- Footer (Simplified) -->
+    <!-- Footer -->
     <footer class="border-t border-slate-200 py-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-sm text-slate-500 text-center">© 2024 Student Management System. All rights reserved.</p>
+            <p class="text-sm text-slate-500 text-center">© 2024 Student Management System — Principal Portal. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
             const mobileToggle = document.getElementById('mobileMenuToggle');
-            const sidebar = document.getElementById('sidebar');
+            const sidebar      = document.getElementById('sidebar');
             const mobileOverlay = document.getElementById('mobileOverlay');
 
-            if (mobileToggle) {
-                mobileToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('-translate-x-full');
-                    mobileOverlay.classList.toggle('active');
-                    document.body.classList.toggle('overflow-hidden');
-                });
-            }
+            mobileToggle?.addEventListener('click', function () {
+                sidebar.classList.toggle('-translate-x-full');
+                mobileOverlay.classList.toggle('active');
+                document.body.classList.toggle('overflow-hidden');
+            });
 
-            if (mobileOverlay) {
-                mobileOverlay.addEventListener('click', function() {
-                    sidebar.classList.add('-translate-x-full');
-                    mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
-                });
-            }
+            mobileOverlay?.addEventListener('click', function () {
+                sidebar.classList.add('-translate-x-full');
+                mobileOverlay.classList.remove('active');
+                document.body.classList.remove('overflow-hidden');
+            });
 
-            // Profile Dropdown
-            const profileBtn = document.getElementById('profileBtn');
+            const profileBtn   = document.getElementById('profileBtn');
             const dropdownMenu = document.getElementById('dropdownMenu');
 
-            if (profileBtn) {
-                profileBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    dropdownMenu.classList.toggle('hidden');
-                    dropdownMenu.classList.toggle('opacity-0');
-                });
+            profileBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+                dropdownMenu.classList.toggle('opacity-0');
+            });
 
-                document.addEventListener('click', (e) => {
-                    if (!profileBtn.contains(e.target) && !dropdownMenu?.contains(e.target)) {
-                        dropdownMenu.classList.add('hidden', 'opacity-0');
-                    }
-                });
-            }
+            document.addEventListener('click', (e) => {
+                if (!profileBtn?.contains(e.target) && !dropdownMenu?.contains(e.target)) {
+                    dropdownMenu?.classList.add('hidden', 'opacity-0');
+                }
+            });
         });
 
-        // Loading Overlay
         function showLoading() {
             document.getElementById('loadingOverlay')?.classList.remove('hidden');
             document.getElementById('loadingOverlay')?.classList.add('flex');
         }
-        
+
         function hideLoading() {
             document.getElementById('loadingOverlay')?.classList.add('hidden');
             document.getElementById('loadingOverlay')?.classList.remove('flex');
         }
 
-        // Toast Notification Function
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            
             const colors = {
                 success: 'bg-green-50 border-green-200 text-green-800',
-                error: 'bg-red-50 border-red-200 text-red-800',
+                error:   'bg-red-50 border-red-200 text-red-800',
                 warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-                info: 'bg-blue-50 border-blue-200 text-blue-800'
+                info:    'bg-blue-50 border-blue-200 text-blue-800'
             };
-            
             const icons = {
                 success: 'bi-check-circle-fill',
-                error: 'bi-exclamation-circle-fill',
+                error:   'bi-exclamation-circle-fill',
                 warning: 'bi-exclamation-triangle-fill',
-                info: 'bi-info-circle-fill'
+                info:    'bi-info-circle-fill'
             };
-            
             toast.className = `toast flex items-center gap-3 p-4 rounded-xl border ${colors[type]} shadow-lg mb-3`;
             toast.innerHTML = `
                 <i class="bi ${icons[type]} text-lg"></i>
                 <p class="flex-1 text-sm font-medium">${message}</p>
                 <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
                     <i class="bi bi-x"></i>
-                </button>
-            `;
-            
+                </button>`;
             toastContainer?.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 5000);
+            setTimeout(() => toast.remove(), 5000);
         }
 
-        // Notification button click
-        document.getElementById('notificationBtn')?.addEventListener('click', () => {
-            showToast('You have 3 new notifications', 'info');
-        });
-
-        // Logout Modal Functions
         function showLogoutModal() {
-            const modal = document.getElementById('logoutModal');
-            const modalContent = document.getElementById('logoutModalContent');
-            if (modal && modalContent) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                setTimeout(() => {
-                    modalContent.classList.remove('scale-0');
-                    modalContent.classList.add('scale-100');
-                }, 10);
-            }
+            const modal   = document.getElementById('logoutModal');
+            const content = document.getElementById('logoutModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { content.classList.remove('scale-0'); content.classList.add('scale-100'); }, 10);
         }
 
         function closeLogoutModal() {
-            const modal = document.getElementById('logoutModal');
-            const modalContent = document.getElementById('logoutModalContent');
-            if (modal && modalContent) {
-                modalContent.classList.remove('scale-100');
-                modalContent.classList.add('scale-0');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 300);
-            }
+            const modal   = document.getElementById('logoutModal');
+            const content = document.getElementById('logoutModalContent');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-0');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
 
-        // Close modal when clicking outside
-        document.getElementById('logoutModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeLogoutModal();
-            }
+        document.getElementById('logoutModal')?.addEventListener('click', function (e) {
+            if (e.target === this) closeLogoutModal();
         });
 
-        // Escape key to close modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeLogoutModal();
-            }
-        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLogoutModal(); });
 
-        // Form submit loading
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', showLoading);
         });

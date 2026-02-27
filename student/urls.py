@@ -2,12 +2,15 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('dashboard/', views.student_dashboard, name='student_dashboard'),
-    path('profile/', views.profile, name='profile'),
-    path('course/', views.course, name='course'),
-    path('addcourse/', views.add_course, name='add_course'),
-    path('purchasecourse/', views.purchase_course, name='purchase_course'),
+    # Public pages (no login required)
+    path('', views.landing_view, name='landing'),  # Root URL / Home page
+    path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('login/', views.login_view, name='login'), 
+    path('register/', views.register_view, name='register'),  
+    path('dashboard/', views.student_dashboard, name='student_dashboard'),
+    path('course/', views.course, name='course'),
+    path('profile/', views.profile, name='profile'),
+    path('course-purchase/', views.purchase_course, name='purchase_course'),  # Added course_id parameter
+    
+    
 ]
-

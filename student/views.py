@@ -99,6 +99,39 @@ def purchase_course(request):
     }
     return render(request, 'student/purchasecourse.html', context)
 
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        try:
+            user = User.objects.get(email=email)
+            # Generate token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Build reset URL
+            reset_url = request.build_absolute_uri(
+                reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+            )
+            
+            # Send email
+            send_mail(
+                subject='Password Reset - StudentManage',
+                message=f'Click the link below to reset your password:\n\n{reset_url}\n\nThis link expires in 24 hours.',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            messages.success(request, 'Reset link sent! Please check your inbox.')
+            return redirect('forgot_password')
+        
+        except User.DoesNotExist:
+            # Don't reveal whether email exists (security best practice)
+            messages.success(request, 'If that email is registered, a reset link has been sent.')
+            return redirect('forgot_password')
+    
+    return render(request, 'forgot_password.html')
+
 
 @login_required
 def profile(request):

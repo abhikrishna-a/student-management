@@ -8,7 +8,7 @@ class RoleBasedAccessMiddleware:
 
     def __call__(self, request):
         # Public paths 
-        public_paths = ['/', '/login/', '/register/', '/logout/']
+        public_paths = ['/', '/login/', '/register/', '/logout/','/forgot-password/']
         
         if any(request.path == path for path in public_paths):
             return self.get_response(request)
@@ -27,7 +27,7 @@ class RoleBasedAccessMiddleware:
         if request.path.startswith('/admin/'):
             return None
 
-        public_paths = ['/', '/login/', '/register/', '/logout/']
+        public_paths = ['/', '/login/', '/register/', '/logout/','/forgot-password/']
         if request.path in public_paths:
             return None
 

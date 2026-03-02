@@ -7,7 +7,7 @@ class RoleBasedAccessMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Public paths — check here in __call__, not process_view
+        # Public paths 
         public_paths = ['/', '/login/', '/register/', '/logout/']
         
         if any(request.path == path for path in public_paths):
@@ -32,7 +32,7 @@ class RoleBasedAccessMiddleware:
             return None
 
         if not request.user.is_authenticated:
-            return None  # already handled in __call__
+            return None  
 
         # Role-based access control
         if hasattr(request.user, 'role'):

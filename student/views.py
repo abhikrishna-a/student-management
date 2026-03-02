@@ -36,7 +36,6 @@ def register_view(request):
         if form.is_valid():
             student = form.save()
 
-            # Send welcome email
             send_mail(
                 subject='Welcome to Our Platform',
                 message=f'Hi {student.username},\n\nYour account has been created successfully!',
@@ -77,7 +76,7 @@ def purchase_course(request):
             messages.error(request, 'No courses selected.')
         return redirect('purchase_course')
 
-    # Filter courses by student's department
+    
     if student.std_dept:
         all_courses = AddOnCourse.objects.select_related('department').filter(department=student.std_dept)
     else:
@@ -108,7 +107,7 @@ def profile(request):
     if request.method == 'POST':
         update_type = request.POST.get('update_type')
 
-        # Profile picture only update
+       
         if update_type == 'profile_pic':
             if request.FILES.get('std_pic'):
                 student.std_pic = request.FILES['std_pic']
@@ -118,7 +117,7 @@ def profile(request):
                 messages.error(request, 'Please select an image to upload.')
             return redirect('profile')
 
-        # Full profile update
+        
         else:
             form = StudentProfileUpdateForm(request.POST, request.FILES, instance=student)
             if form.is_valid():

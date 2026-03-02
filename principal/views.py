@@ -118,8 +118,7 @@ def view_courses(request):
     dept_filter  = request.GET.get('dept', '')
     search_query = request.GET.get('q', '')
 
-    # FIX: related_name is 'student_purchases', not 'studentcourse'
-    # FIX: removed is_active filter — field doesn't exist on AddOnCourse
+   
     courses = AddOnCourse.objects.select_related('department').annotate(
         enrolled_count=Count('student_purchases'),
     )

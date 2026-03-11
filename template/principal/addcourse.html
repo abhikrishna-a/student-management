@@ -5,153 +5,151 @@
 {% block content %}
 
 <!-- Page Header -->
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900">Add New Course</h1>
-        <p class="text-slate-500 text-sm mt-1">Create a new course and assign it to a department</p>
+<div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="bi bi-file-earmark-plus text-2xl"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 outfit-font tracking-tight">Add New Course</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Create a new course and assign it to a department</p>
+        </div>
     </div>
     <a href="{% url 'view_courses' %}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+       class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors">
         <i class="bi bi-arrow-left"></i> Back to Courses
     </a>
 </div>
 
 <!-- Form Card -->
-<div class="dashboard-card overflow-hidden max-w-5xl mx-auto">
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden max-w-4xl mx-auto">
 
     <!-- Card Header -->
-    <div class="section-heading border-b border-slate-100">
-        <div class="section-heading-icon bg-slate-100">
-            <i class="bi bi-plus-circle text-slate-700"></i>
+    <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+        <div class="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 shadow-sm">
+            <i class="bi bi-info-circle text-sm"></i>
         </div>
         <div>
-            <h3 class="text-base font-bold text-slate-900">Course Information</h3>
-            <p class="text-xs text-slate-500">Fill in all required fields marked with *</p>
+            <h3 class="text-base font-bold text-slate-800 outfit-font">Course Details</h3>
+            <p class="text-xs text-slate-500 font-medium">Fields marked with <span class="text-red-500">*</span> are required</p>
         </div>
     </div>
 
     <!-- Form -->
-    <form method="POST" action="{% url 'add_course' %}" class="p-8">
+    <form method="POST" action="{% url 'add_course' %}" class="p-6 md:p-8">
         {% csrf_token %}
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
 
-            <!-- Left Column -->
-            <div class="space-y-6">
-
-                <!-- Course ID -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        Course ID <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">#</span>
-                        <input type="text"
-                               name="course_id"
-                               id="course_id"
-                               placeholder="CS101"
-                               required
-                               oninput="this.value = this.value.toUpperCase()"
-                               class="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all bg-white">
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1.5">Unique identifier (auto-uppercased)</p>
-                </div>
-
-                <!-- Course Price -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        Course Price
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">₹</span>
-                        <input type="number"
-                               name="course_price"
-                               id="course_price"
-                               placeholder="0"
-                               min="0"
-                               value="0"
-                               class="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all bg-white">
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1.5">Enter 0 for free courses</p>
-                </div>
-
-            </div>
-
-            <!-- Middle Column -->
-            <div class="space-y-6">
-
-                <!-- Department -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        Department <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                            <i class="bi bi-building text-sm"></i>
-                        </span>
-                        <select name="department"
-                                required
-                                class="w-full pl-9 pr-10 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all bg-white appearance-none cursor-pointer">
-                            <option value="">— Select Department —</option>
-                            {% for dept in departments %}
-                            <option value="{{ dept.pk }}">{{ dept.dept_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                            <i class="bi bi-chevron-down text-xs"></i>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Course Name -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        Course Name <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                            <i class="bi bi-journal-bookmark text-sm"></i>
-                        </span>
-                        <input type="text"
-                               name="course_name"
-                               placeholder="Introduction to Programming"
-                               required
-                               class="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all bg-white">
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Right Column - Description -->
+            <!-- Course ID -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1.5 flex justify-between">
+                    <span>Course ID <span class="text-red-500">*</span></span>
+                    <span class="text-[10px] text-slate-400 font-normal uppercase tracking-wider">Auto-uppercased</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-slate-400 font-medium sm:text-sm">#</span>
+                    </div>
+                    <input type="text"
+                           name="course_id"
+                           id="course_id"
+                           placeholder="CS101"
+                           required
+                           oninput="this.value = this.value.toUpperCase()"
+                           class="block w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-white">
+                </div>
+            </div>
+
+            <!-- Course Price -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5 flex justify-between">
+                    <span>Course Price</span>
+                    <span class="text-[10px] text-slate-400 font-normal uppercase tracking-wider">0 for free</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-slate-400 sm:text-sm">₹</span>
+                    </div>
+                    <input type="number"
+                           name="course_price"
+                           id="course_price"
+                           placeholder="0"
+                           min="0"
+                           value="0"
+                           class="block w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-white">
+                </div>
+            </div>
+
+            <!-- Department -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Department <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-building text-slate-400"></i>
+                    </div>
+                    <select name="department"
+                            required
+                            class="block w-full pl-9 pr-10 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-white appearance-none">
+                        <option value="">— Select Department —</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.pk }}">{{ dept.dept_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <i class="bi bi-chevron-down text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Name -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                    Course Name <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="bi bi-journal-bookmark text-slate-400"></i>
+                    </div>
+                    <input type="text"
+                           name="course_name"
+                           placeholder="Introduction to Programming"
+                           required
+                           class="block w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-white">
+                </div>
+            </div>
+
+            <!-- Course Description -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">
                     Course Description <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <span class="absolute left-3 top-3.5 text-slate-400">
-                        <i class="bi bi-card-text text-sm"></i>
-                    </span>
+                    <div class="absolute top-3 left-3 pointer-events-none">
+                        <i class="bi bi-card-text text-slate-400"></i>
+                    </div>
                     <textarea name="course_description"
-                              rows="7"
+                              rows="5"
                               placeholder="Brief description of the course including syllabus, learning outcomes, prerequisites..."
                               required
-                              class="w-full pl-9 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all bg-white resize-none"></textarea>
+                              class="block w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-white resize-y"></textarea>
                 </div>
-                <p class="text-xs text-slate-400 mt-1.5">Detailed description helps students make informed decisions</p>
             </div>
 
         </div>
 
-        <!-- Divider -->
-        <div class="border-t border-slate-100 mt-8 pt-6 flex items-center justify-end gap-3">
+        <!-- Submit actions -->
+        <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3">
             <a href="{% url 'view_courses' %}"
-               class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors">
-                <i class="bi bi-x-circle"></i> Cancel
+               class="w-full sm:w-auto inline-flex justify-center items-center px-5 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors shadow-sm">
+                Cancel
             </a>
             <button type="submit"
-                    onclick="showLoading()"
-                    class="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors shadow-sm">
-                <i class="bi bi-save2"></i> Save Course
+                    onclick="if(this.form.checkValidity()) window.showLoading();"
+                    class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-6 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+                <i class="bi bi-check2"></i> Create Course
             </button>
         </div>
 

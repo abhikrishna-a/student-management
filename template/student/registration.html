@@ -1,152 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Student Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        .register-card { background: white; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
-        .input-field { border: 1px solid #e2e8f0; transition: all 0.2s ease; }
-        .input-field:focus { border-color: #0f172a; box-shadow: 0 0 0 3px rgba(15,23,42,0.1); outline: none; }
-        .slate-btn { background: #0f172a; color: white; transition: all 0.2s ease; }
-        .slate-btn:hover { background: #1e293b; }
-        .progress-step {
-            width: 2.5rem; height: 2.5rem; border: 2px solid #e2e8f0; border-radius: 9999px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 600; font-size: 0.875rem; transition: all 0.3s ease;
-            background: white; position: relative; z-index: 10;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-        .progress-step.active { border-color: #0f172a; background: #0f172a; color: white; transform: scale(1.1); box-shadow: 0 10px 15px -3px rgba(15,23,42,0.2); }
-        .progress-step.completed { background: #0f172a; border-color: #0f172a; color: white; }
-        .progress-line { flex: 1; height: 2px; background: #e2e8f0; margin: 0 0.5rem; }
-        .progress-line.active { background: #0f172a; }
-        .step-content { display: none; animation: fadeIn 0.5s ease forwards; }
-        .step-content.active { display: block; }
+        .outfit-font { font-family: 'Space Grotesk', sans-serif; }
+        
+        .register-card { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+        }
+        .input-field { 
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease; 
+        }
+        .input-field:focus { 
+            border-color: #ef4444; /* red-500 */
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+            outline: none; 
+        }
+        
+        .primary-btn { 
+            background: #ef4444; /* red-500 */ 
+            color: #ffffff; 
+            border-radius: 0.5rem;
+            transition: all 0.2s ease; 
+            font-weight: 600;
+        }
+        .primary-btn:hover:not(:disabled) { 
+            background: #dc2626; /* red-600 */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+        }
+        .primary-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #94a3b8; /* slate-400 */
+        }
+
+        .secondary-btn {
+            background: #ffffff;
+            color: #334155; /* slate-700 */
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .secondary-btn:hover:not(:disabled) {
+            background: #f1f5f9; /* slate-100 */
+        }
+        .secondary-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-step {
+            width: 2.5rem; height: 2.5rem; border: 2px solid #e2e8f0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 1rem; transition: all 0.3s ease;
+            background: #ffffff; position: relative; z-index: 10;
+            color: #64748b; /* slate-500 */
+        }
+        .progress-step.active { 
+            border-color: #ef4444; /* red-500 */
+            color: #ef4444;
+            background: #fee2e2; /* red-100 */
+        }
+        .progress-step.completed { 
+            background: #ef4444; /* red-500 */
+            border-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .progress-line { flex: 1; height: 3px; background: #e2e8f0; margin: 0 0.5rem; transition: background 0.3s ease; }
+        .progress-line.active { background: #ef4444; }
+        
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .floating { animation: floating 3s ease-in-out infinite; }
-        @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+        
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-50 to-white min-h-screen antialiased py-8">
+<body class="min-h-screen antialiased py-8 relative overflow-x-hidden text-slate-800 selection:bg-red-200 selection:text-red-900">
 
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Header -->
-    <div class="text-center mb-8 floating">
-        <div class="flex items-center justify-center gap-2 mb-4">
-            <div class="p-2 bg-slate-900 rounded-lg shadow-lg">
-                <i class="bi bi-mortarboard-fill text-white text-xl"></i>
+        <!-- Header -->
+    <div class="text-center mb-8 mt-4">
+        <a href="{% url 'landing' %}" class="inline-flex items-center justify-center gap-3 mb-6 group">
+            <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-md group-hover:bg-red-700 group-hover:shadow-lg transition-all">
+                <i class="bi bi-mortarboard-fill text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Student<span class="text-slate-500">Manage</span></h1>
-        </div>
-        <h2 class="text-3xl font-bold text-slate-900 mb-2">Create Account</h2>
-        <p class="text-slate-600">Join our community of learners - Step <span id="currentStepDisplay">1</span> of 3</p>
+            <h1 class="text-3xl font-bold tracking-tight outfit-font text-slate-900">
+                Edu<span class="text-red-600">Sphere</span>
+            </h1>
+        </a>
+        <h2 class="text-3xl font-bold text-slate-900 mb-2 outfit-font tracking-tight">Create Account</h2>
+        <p class="text-slate-500 font-medium text-sm">Join our community - Step <span id="currentStepDisplay" class="font-bold text-red-600">1</span> of 3</p>
     </div>
 
     <!-- Progress Steps -->
-    <div class="flex items-center justify-between mb-8 px-4">
+    <div class="flex items-center justify-between mb-8 px-4 max-w-lg mx-auto">
         <div class="flex flex-col items-center">
             <div class="progress-step active" id="step1Indicator">1</div>
-            <span class="text-xs font-medium mt-2 text-slate-900" id="step1Text">Personal</span>
+            <span class="text-xs font-semibold mt-2 text-slate-700" id="step1Text">Personal</span>
         </div>
         <div class="progress-line" id="line1"></div>
         <div class="flex flex-col items-center">
             <div class="progress-step" id="step2Indicator">2</div>
-            <span class="text-xs font-medium mt-2 text-slate-500" id="step2Text">Student Info</span>
+            <span class="text-xs font-medium mt-2 text-slate-400" id="step2Text">Student Info</span>
         </div>
         <div class="progress-line" id="line2"></div>
         <div class="flex flex-col items-center">
             <div class="progress-step" id="step3Indicator">3</div>
-            <span class="text-xs font-medium mt-2 text-slate-500" id="step3Text">Security</span>
+            <span class="text-xs font-medium mt-2 text-slate-400" id="step3Text">Security</span>
         </div>
     </div>
 
     <!-- Card -->
-    <div class="register-card rounded-2xl p-8 shadow-lg">
+    <div class="register-card p-6 sm:p-10 relative z-10 mx-2">
 
         <!-- Django messages (server-side errors) -->
         {% if messages %}
-        <div class="mb-6 space-y-2">
+        <div class="mb-6 space-y-3">
             {% for message in messages %}
-            <div class="px-4 py-3 rounded-lg text-sm flex items-center gap-2
-                {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200
-                {% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
-                <i class="bi {% if message.tags == 'error' %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
+            <div class="px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-3 shadow-sm
+                {% if message.tags == 'error' %}bg-red-50 text-red-800 border-l-4 border-red-500{% else %}bg-green-50 text-green-800 border-l-4 border-green-500{% endif %}">
+                <i class="bi {% if message.tags == 'error' %}bi-exclamation-circle-fill{% else %}bi-check-circle-fill{% endif %} text-lg"></i>
                 {{ message }}
             </div>
             {% endfor %}
         </div>
         {% endif %}
 
-        <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data" id="registrationForm">
-            {% csrf_token %}
+            <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data" id="registrationForm">
+                {% csrf_token %}
 
-            <!-- STEP 1: Personal Information -->
+                <!-- STEP 1: Personal Information -->
             <div class="step-content active" id="step1">
-                <div class="flex items-center gap-2 mb-6">
-                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
-                        <i class="bi bi-person-vcard text-white text-lg"></i>
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                        <i class="bi bi-person-vcard text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900">Personal Information</h3>
+                    <h3 class="text-xl font-bold text-slate-900 outfit-font">Personal Information</h3>
                 </div>
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">First Name <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">First Name <span class="text-red-500">*</span></label>
                             <input type="text" name="first_name" required
                                    value="{{ request.POST.first_name }}"
-                                   class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="John">
+                                   class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="John">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Last Name <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Last Name <span class="text-red-500">*</span></label>
                             <input type="text" name="last_name" required
                                    value="{{ request.POST.last_name }}"
-                                   class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="Doe">
+                                   class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="Doe">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Username <span class="text-red-500">*</span></label>
                         <input type="text" name="username" required
                                value="{{ request.POST.username }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="john_doe">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="john_doe">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
                         <input type="email" name="email" required
                                value="{{ request.POST.email }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="student@example.com">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="student@example.com">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Age</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Age</label>
                         <input type="number" name="std_age" min="10" max="100"
                                value="{{ request.POST.std_age }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="20">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="20">
                     </div>
                 </div>
             </div>
 
-            <!-- STEP 2: Student Information -->
+                <!-- STEP 2: Student Information -->
             <div class="step-content" id="step2">
-                <div class="flex items-center gap-2 mb-6">
-                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
-                        <i class="bi bi-mortarboard text-white text-lg"></i>
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                        <i class="bi bi-mortarboard text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900">Student Information</h3>
+                    <h3 class="text-xl font-bold text-slate-900 outfit-font">Student Information</h3>
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Registration Number <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Registration Number <span class="text-red-500">*</span></label>
                         <input type="text" name="std_reg_no" required
                                value="{{ request.POST.std_reg_no }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="REG2024001">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="REG2024001">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Department</label>
-                        <select name="std_dept" class="input-field w-full px-4 py-3 rounded-lg text-slate-700">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Department</label>
+                        <select name="std_dept" class="input-field w-full px-4 py-2.5 text-slate-900 cursor-pointer appearance-none rounded-lg" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat, repeat; background-position: right 1em top 50%, 0 0; background-size: .65em auto, 100%;">
                             <option value="">Select Department</option>
                             {% for dept in form.std_dept.field.queryset %}
                             <option value="{{ dept.pk }}" {% if request.POST.std_dept == dept.pk|stringformat:"s" %}selected{% endif %}>
@@ -156,230 +222,206 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Year of Admission</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Year of Admission</label>
                         <input type="number" name="std_year_of_admission" min="2000" max="2100"
                                value="{{ request.POST.std_year_of_admission|default:'2024' }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="2024">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="2024">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
                         <input type="tel" name="std_phone_no"
                                value="{{ request.POST.std_phone_no }}"
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="9876543210">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="9876543210">
                     </div>
                 </div>
             </div>
 
-            <!-- STEP 3: Security -->
+                <!-- STEP 3: Security -->
             <div class="step-content" id="step3">
-                <div class="flex items-center gap-2 mb-6">
-                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
-                        <i class="bi bi-shield-lock text-white text-lg"></i>
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                        <i class="bi bi-shield-lock text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900">Security & Terms</h3>
+                    <h3 class="text-xl font-bold text-slate-900 outfit-font">Security & Terms</h3>
                 </div>
-                <div class="space-y-5">
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Profile Picture</label>
-                        <div class="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-slate-400 transition-colors cursor-pointer" id="uploadZone">
-                            <i class="bi bi-cloud-upload text-3xl text-slate-400 mb-2"></i>
-                            <p class="text-sm text-slate-600">Click to upload or drag and drop</p>
-                            <p class="text-xs text-slate-400 mt-1">Max size 2MB. JPG, PNG only.</p>
-                            <input type="file" name="std_pic" accept="image/*" class="hidden" id="picInput">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Password <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Password <span class="text-red-500">*</span></label>
                         <input type="password" name="password1" required
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="••••••••">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="••••••••">
                         <div class="flex items-center gap-2 mt-2">
-                            <div class="flex-1 h-1 bg-slate-200 rounded-full">
-                                <div class="h-1 bg-slate-200 rounded-full transition-all" id="strengthBar" style="width:0%"></div>
+                            <div class="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-red-500 transition-all rounded-full" id="strengthBar" style="width:0%"></div>
                             </div>
-                            <span class="text-xs text-slate-500">Password strength</span>
+                            <span class="text-xs font-semibold text-slate-500">Strength</span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1"><i class="bi bi-info-circle"></i> Minimum 8 characters</p>
+                        <p class="text-xs text-slate-500 mt-1.5"><i class="bi bi-info-circle"></i> Minimum 8 characters</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Confirm Password <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Confirm Password <span class="text-red-500">*</span></label>
                         <input type="password" name="password2" required
-                               class="input-field w-full px-4 py-3 rounded-lg text-slate-700" placeholder="••••••••">
+                               class="input-field w-full px-4 py-2.5 text-slate-900" placeholder="••••••••">
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-lg">
+                    <div class="bg-slate-50 p-4 rounded-lg mt-6 border border-slate-200">
                         <div class="flex items-start gap-3">
-                            <input type="checkbox" id="terms" required class="mt-1 w-4 h-4">
+                            <input type="checkbox" id="terms" required class="mt-0.5 w-4 h-4 text-red-600 bg-white border-slate-300 rounded focus:ring-red-500 focus:ring-2 appearance-none checked:bg-red-500 checked:border-transparent checked:before:content-['✓'] checked:before:flex checked:before:justify-center checked:before:text-white checked:before:text-xs">
                             <label for="terms" class="text-sm text-slate-700">
-                                I agree to the <a href="#" class="text-slate-900 font-semibold hover:underline">Terms & Conditions</a>
-                                and <a href="#" class="text-slate-900 font-semibold hover:underline">Privacy Policy</a>.
+                                I agree to the <a href="#" class="text-red-600 hover:text-red-700 font-medium hover:underline">Terms & Conditions</a>
+                                and <a href="#" class="text-red-600 hover:text-red-700 font-medium hover:underline">Privacy Policy</a>.
                             </label>
                         </div>
                     </div>
-                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-blue-800 mb-2"><i class="bi bi-shield-check"></i> Account Security Tips</h4>
-                        <ul class="text-xs text-blue-700 space-y-1">
-                            <li>• Use a mix of letters, numbers, and symbols</li>
-                            <li>• Don't use common words or phrases</li>
-                            <li>• Never share your password with anyone</li>
+                    <div class="bg-blue-50 rounded-lg p-4 mt-4 border border-blue-100">
+                        <h4 class="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2"><i class="bi bi-shield-check text-blue-600"></i> Account Security Tips</h4>
+                        <ul class="text-xs text-blue-800 space-y-1.5 pl-6 list-disc">
+                            <li>Use a mix of letters, numbers, and symbols</li>
+                            <li>Don't use common words or phrases</li>
+                            <li>Never share your password with anyone</li>
                         </ul>
                     </div>
                 </div>
             </div>
-
-            <!-- Navigation Buttons -->
+                                <!-- Navigation Buttons -->
             <div class="flex justify-between gap-4 mt-8 pt-6 border-t border-slate-200">
                 <button type="button" id="prevBtn" onclick="changeStep(-1)"
-                        class="px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
+                        class="secondary-btn px-6 py-2.5 flex items-center gap-2">
                     <i class="bi bi-arrow-left"></i> Previous
                 </button>
+                <div class="flex-1"></div>
                 <button type="button" id="nextBtn" onclick="changeStep(1)"
-                        class="px-6 py-3 slate-btn rounded-lg font-semibold flex items-center gap-2">
-                    Next <i class="bi bi-arrow-right"></i>
+                        class="primary-btn px-8 py-2.5 flex items-center gap-2">
+                    Next Step <i class="bi bi-arrow-right"></i>
                 </button>
                 <button type="submit" id="submitBtn"
-                        class="hidden px-6 py-3 slate-btn rounded-lg font-semibold flex items-center gap-2">
-                    <i class="bi bi-person-plus"></i> Complete Registration
+                        class="hidden primary-btn px-8 py-2.5 flex items-center gap-2">
+                    <i class="bi bi-person-plus"></i> Complete
                 </button>
             </div>
         </form>
 
-        <p class="text-center text-sm text-slate-600 mt-6">
-            Already have an account?
-            <a href="{% url 'login' %}" class="font-semibold text-slate-900 hover:underline">Sign in here</a>
-        </p>
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p class="text-sm text-slate-600">
+                Already have an account?
+                <a href="{% url 'login' %}" class="text-red-600 font-semibold hover:text-red-700 hover:underline ml-1">Sign in here</a>
+            </p>
+        </div>
     </div>
 
-    <div class="text-center mt-6">
-        <a href="{% url 'landing' %}" class="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900 transition-colors">
+    <div class="text-center mt-6 pb-8">
+        <a href="{% url 'landing' %}" class="inline-flex items-center gap-2 text-sm text-slate-500 font-medium hover:text-slate-800 transition-colors">
             <i class="bi bi-arrow-left"></i> Back to Home
         </a>
     </div>
 </div>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
 
-<script>
-    let currentStep = 1;
-    const totalSteps = 3;
+        function updateStepDisplay() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const indicator = document.getElementById(`step${i}Indicator`);
+                const text = document.getElementById(`step${i}Text`);
+                const line = document.getElementById(`line${i}`);
 
-    function updateStepDisplay() {
-        for (let i = 1; i <= totalSteps; i++) {
-            const indicator = document.getElementById(`step${i}Indicator`);
-            const text = document.getElementById(`step${i}Text`);
-            const line = document.getElementById(`line${i}`);
+                if (i < currentStep) {
+                    indicator.className = 'progress-step completed';
+                    indicator.innerHTML = '<i class="bi bi-check-lg text-white"></i>';
+                    if (text) text.className = 'text-xs font-semibold mt-2 text-slate-900';
+                    if (line) line.className = 'progress-line active';
+                } else if (i === currentStep) {
+                    indicator.className = 'progress-step active';
+                    indicator.innerHTML = i;
+                    if (text) text.className = 'text-xs font-semibold mt-2 text-red-600';
+                    if (line) line.className = 'progress-line';
+                } else {
+                    indicator.className = 'progress-step';
+                    indicator.innerHTML = i;
+                    if (text) text.className = 'text-xs font-medium mt-2 text-slate-400';
+                    if (line) line.className = 'progress-line';
+                }
+            }
 
-            if (i < currentStep) {
-                indicator.className = 'progress-step completed';
-                indicator.innerHTML = '<i class="bi bi-check-lg text-sm"></i>';
-                if (text) text.className = 'text-xs font-medium mt-2 text-slate-900';
-                if (line) line.className = 'progress-line active';
-            } else if (i === currentStep) {
-                indicator.className = 'progress-step active';
-                indicator.innerHTML = i;
-                if (text) text.className = 'text-xs font-medium mt-2 text-slate-900';
-                if (line) line.className = 'progress-line';
-            } else {
-                indicator.className = 'progress-step';
-                indicator.innerHTML = i;
-                if (text) text.className = 'text-xs font-medium mt-2 text-slate-500';
-                if (line) line.className = 'progress-line';
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`step${i}`).classList.toggle('active', i === currentStep);
+            }
+
+            document.getElementById('prevBtn').disabled = currentStep === 1;
+            document.getElementById('nextBtn').classList.toggle('hidden', currentStep === totalSteps);
+            document.getElementById('submitBtn').classList.toggle('hidden', currentStep !== totalSteps);
+            document.getElementById('currentStepDisplay').textContent = currentStep;
+        }
+
+        function changeStep(direction) {
+            const newStep = currentStep + direction;
+            if (newStep >= 1 && newStep <= totalSteps) {
+                if (direction > 0 && !validateStep(currentStep)) return;
+                currentStep = newStep;
+                updateStepDisplay();
             }
         }
 
-        for (let i = 1; i <= totalSteps; i++) {
-            document.getElementById(`step${i}`).classList.toggle('active', i === currentStep);
+        function validateStep(step) {
+            if (step === 1) {
+                const firstName = document.querySelector('input[name="first_name"]').value.trim();
+                const lastName = document.querySelector('input[name="last_name"]').value.trim();
+                const username = document.querySelector('input[name="username"]').value.trim();
+                const email = document.querySelector('input[name="email"]').value.trim();
+                if (!firstName || !lastName || !username || !email) {
+                    alert('Please fill in all required fields: First Name, Last Name, Username, Email');
+                    return false;
+                }
+                if (!email.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return false;
+                }
+            }
+            if (step === 2) {
+                const regNo = document.querySelector('input[name="std_reg_no"]').value.trim();
+                if (!regNo) {
+                    alert('Please enter your Registration Number');
+                    return false;
+                }
+            }
+            if (step === 3) {
+                const p1 = document.querySelector('input[name="password1"]').value;
+                const p2 = document.querySelector('input[name="password2"]').value;
+                if (!p1 || p1.length < 8) {
+                    alert('Password must be at least 8 characters');
+                    return false;
+                }
+                if (p1 !== p2) {
+                    alert('Passwords do not match');
+                    return false;
+                }
+                if (!document.getElementById('terms').checked) {
+                    alert('Please agree to the Terms & Conditions');
+                    return false;
+                }
+            }
+            return true;
         }
 
-        document.getElementById('prevBtn').disabled = currentStep === 1;
-        document.getElementById('nextBtn').classList.toggle('hidden', currentStep === totalSteps);
-        document.getElementById('submitBtn').classList.toggle('hidden', currentStep !== totalSteps);
-        document.getElementById('currentStepDisplay').textContent = currentStep;
-    }
+        // Password strength
+        document.querySelector('input[name="password1"]').addEventListener('input', function () {
+            const bar = document.getElementById('strengthBar');
+            const len = this.value.length;
+            if (len === 0) { bar.style.width = '0%'; bar.className = 'h-full bg-red-500 transition-all rounded-full'; }
+            else if (len < 5) { bar.style.width = '25%'; bar.className = 'h-full bg-red-400 transition-all rounded-full'; }
+            else if (len < 8) { bar.style.width = '50%'; bar.className = 'h-full bg-yellow-400 transition-all rounded-full'; }
+            else if (len < 12) { bar.style.width = '75%'; bar.className = 'h-full bg-green-400 transition-all rounded-full'; }
+            else { bar.style.width = '100%'; bar.className = 'h-full bg-green-500 transition-all rounded-full'; }
+        });
 
-    function changeStep(direction) {
-        const newStep = currentStep + direction;
-        if (newStep >= 1 && newStep <= totalSteps) {
-            if (direction > 0 && !validateStep(currentStep)) return;
-            currentStep = newStep;
-            updateStepDisplay();
-        }
-    }
+        // Submit loading state
+        document.getElementById('registrationForm').addEventListener('submit', function (e) {
+            if (!validateStep(3)) { e.preventDefault(); return; }
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Creating Account...';
+            btn.disabled = true;
+        });
 
-    function validateStep(step) {
-        if (step === 1) {
-            const firstName = document.querySelector('input[name="first_name"]').value.trim();
-            const lastName = document.querySelector('input[name="last_name"]').value.trim();
-            const username = document.querySelector('input[name="username"]').value.trim();
-            const email = document.querySelector('input[name="email"]').value.trim();
-            if (!firstName || !lastName || !username || !email) {
-                alert('Please fill in all required fields: First Name, Last Name, Username, Email');
-                return false;
-            }
-            if (!email.includes('@')) {
-                alert('Please enter a valid email address');
-                return false;
-            }
-        }
-        if (step === 2) {
-            const regNo = document.querySelector('input[name="std_reg_no"]').value.trim();
-            if (!regNo) {
-                alert('Please enter your Registration Number');
-                return false;
-            }
-        }
-        if (step === 3) {
-            const p1 = document.querySelector('input[name="password1"]').value;
-            const p2 = document.querySelector('input[name="password2"]').value;
-            if (!p1 || p1.length < 8) {
-                alert('Password must be at least 8 characters');
-                return false;
-            }
-            if (p1 !== p2) {
-                alert('Passwords do not match');
-                return false;
-            }
-            if (!document.getElementById('terms').checked) {
-                alert('Please agree to the Terms & Conditions');
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // File upload zone
-    document.getElementById('uploadZone').addEventListener('click', function () {
-        document.getElementById('picInput').click();
-    });
-    document.getElementById('picInput').addEventListener('change', function () {
-        if (this.files && this.files[0]) {
-            const zone = document.getElementById('uploadZone');
-            zone.innerHTML = `
-                <i class="bi bi-check-circle-fill text-green-500 text-3xl mb-2"></i>
-                <p class="text-sm text-slate-600">${this.files[0].name}</p>
-                <p class="text-xs text-slate-400 mt-1">Click to change</p>
-                <input type="file" name="std_pic" accept="image/*" class="hidden" id="picInput">
-            `;
-            document.getElementById('picInput').addEventListener('change', arguments.callee);
-        }
-    });
-
-    // Password strength
-    document.querySelector('input[name="password1"]').addEventListener('input', function () {
-        const bar = document.getElementById('strengthBar');
-        const len = this.value.length;
-        if (len === 0) { bar.style.width = '0%'; bar.className = 'h-1 rounded-full'; }
-        else if (len < 5) { bar.style.width = '25%'; bar.className = 'h-1 bg-red-500 rounded-full'; }
-        else if (len < 8) { bar.style.width = '50%'; bar.className = 'h-1 bg-yellow-500 rounded-full'; }
-        else if (len < 12) { bar.style.width = '75%'; bar.className = 'h-1 bg-green-500 rounded-full'; }
-        else { bar.style.width = '100%'; bar.className = 'h-1 bg-green-600 rounded-full'; }
-    });
-
-    // Submit loading state
-    document.getElementById('registrationForm').addEventListener('submit', function (e) {
-        if (!validateStep(3)) { e.preventDefault(); return; }
-        const btn = document.getElementById('submitBtn');
-        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating Account...';
-        btn.disabled = true;
-    });
-
-    updateStepDisplay();
-</script>
+        updateStepDisplay();
+    </script>
 </body>
+
 </html>

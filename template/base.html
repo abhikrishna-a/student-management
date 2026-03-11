@@ -9,15 +9,24 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
+        body {
             font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        h1, h2, h3, h4, h5, h6, .outfit-font {
+            font-family: 'Space Grotesk', sans-serif;
         }
         
         /* Sidebar styles */
         .sidebar {
             transition: all 0.3s ease;
+            background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
         }
         
         .sidebar-link {
@@ -26,19 +35,21 @@
             gap: 0.75rem;
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
-            color: #334155;
+            color: #475569; /* slate-600 */
+            font-weight: 600;
             transition: all 0.2s ease;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
         
         .sidebar-link:hover {
-            background: #f1f5f9;
-            color: #0f172a;
+            background: #fee2e2; /* red-100 */
+            color: #dc2626; /* red-600 */
         }
         
         .sidebar-link.active {
-            background: #0f172a;
-            color: white;
+            background: #ef4444; /* red-500 */
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
         }
         
         .sidebar-link i {
@@ -56,7 +67,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.5); /* slate-900 / 50 */
             backdrop-filter: blur(4px);
             z-index: 40;
         }
@@ -86,83 +97,75 @@
         
         /* Dashboard card styles */
         .dashboard-card {
-            background: white;
+            background: #ffffff;
             border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
         }
         
         .dashboard-card:hover {
-            border-color: #94a3b8;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
         
         .stat-card {
-            background: white;
+            background: #ffffff;
             border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
         }
         
         .stat-card:hover {
-            border-color: #0f172a;
-            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
         
         .progress-bar {
-            background: #e2e8f0;
+            background: #f1f5f9; /* slate-100 */
             border-radius: 9999px;
             overflow: hidden;
+            height: 0.75rem;
         }
         
         .progress-fill {
-            background: #0f172a;
+            background: #ef4444; /* red-500 */
             height: 100%;
             border-radius: 9999px;
-            transition: width 0.3s ease;
+            transition: width 0.5s ease;
         }
         
         .badge {
-            background: #f1f5f9;
+            background: #f8fafc;
             color: #334155;
             font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            font-weight: 500;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
-        .badge.success {
-            background: #dcfce7;
-            color: #166534;
-        }
-        
-        .badge.warning {
-            background: #fef9c3;
-            color: #854d0e;
-        }
+        .badge.success { background: #dcfce7; color: #166534; border-color: #bbf7d0; } /* green */
+        .badge.warning { background: #fef9c3; color: #854d0e; border-color: #fef08a; } /* yellow */
+        .badge.danger { background: #fee2e2; color: #991b1b; border-color: #fecaca; } /* red */
         
         .slate-badge {
-            background: #0f172a;
+            background: #ef4444; /* red-500 */
             color: white;
-            font-weight: 500;
-            letter-spacing: 0.025em;
-        }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+            border: none;
+            font-weight: 600;
         }
 
         /* Loading spinner */
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(15, 23, 42, 0.1);
+            width: 48px;
+            height: 48px;
+            border: 4px solid #fee2e2;
             border-radius: 50%;
-            border-top-color: #0f172a;
+            border-top-color: #ef4444;
             animation: spin 1s ease-in-out infinite;
         }
         
@@ -188,13 +191,13 @@
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-slate-50 min-h-screen antialiased">
+<body class="min-h-screen antialiased text-slate-800 relative selection:bg-red-200 selection:text-red-900">
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[9999] hidden items-center justify-center">
         <div class="text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-gray-600 font-medium animate-pulse">Loading...</p>
+            <p class="text-slate-600 font-medium animate-pulse">Loading...</p>
         </div>
     </div>
 
@@ -202,44 +205,44 @@
     <div id="toastContainer" class="fixed top-20 right-4 z-[9998] space-y-3"></div>
 
     <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] hidden items-center justify-center">
-        <div class="bg-white rounded-3xl p-8 max-w-md mx-4 transform scale-0 transition-transform duration-300" id="logoutModalContent">
+    <div id="logoutModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden items-center justify-center">
+        <div class="bg-white rounded-xl p-8 max-w-md mx-4 transform scale-0 transition-all duration-300 shadow-2xl" id="logoutModalContent">
             <div class="text-center">
-                <div class="w-20 h-20 mx-auto bg-slate-900 rounded-2xl flex items-center justify-center mb-4">
-                    <i class="bi bi-box-arrow-right text-white text-3xl"></i>
+                <div class="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="bi bi-box-arrow-right text-red-600 text-3xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Logout Confirmation</h3>
-                <p class="text-gray-600 mb-6">Are you sure you want to logout? You'll need to login again to access your courses.</p>
-                <div class="flex gap-3 justify-center">
-                    <button onclick="closeLogoutModal()" class="px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-all font-medium">
+                <h3 class="text-2xl font-bold mb-3 outfit-font text-slate-900">Leaving so soon?</h3>
+                <p class="text-slate-600 mb-8">Are you sure you want to logout? You'll need to login again to access your courses.</p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="closeLogoutModal()" class="flex-1 px-6 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-colors">
                         Cancel
                     </button>
-                    <a href="{% url 'logout' %}" class="px-6 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 hover:shadow-lg transition-all font-medium">
-                        Yes, Logout
+                    <a href="{% url 'logout' %}" class="flex-1 px-6 py-2.5 bg-red-600 rounded-lg text-white font-medium hover:bg-red-700 transition-colors shadow-sm">
+                        Logout
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Navigation Bar (Simplified) -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 transition-all duration-300 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Left section with mobile menu button and logo -->
                 <div class="flex items-center gap-4">
                     <!-- Mobile menu toggle -->
-                    <button id="mobileMenuToggle" class="lg:hidden text-slate-600 hover:text-slate-900">
+                    <button id="mobileMenuToggle" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                         <i class="bi bi-list text-2xl"></i>
                     </button>
                     
                     <!-- Logo -->
-                    <a href="{% url 'landing' %}" class="flex items-center gap-2">
-                        <div class="p-2 bg-slate-900 rounded-lg">
-                            <i class="bi bi-mortarboard-fill text-white text-xl"></i>
+                    <a href="{% url 'landing' %}" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white shadow-sm group-hover:bg-red-700 transition-colors">
+                            <i class="bi bi-mortarboard-fill text-xl"></i>
                         </div>
-                        <h1 class="text-xl font-bold text-slate-900 tracking-tight">
-                            Student<span class="text-slate-500">Manage</span>
+                        <h1 class="text-2xl font-bold tracking-tight outfit-font text-slate-900">
+                            Edu<span class="text-red-600">Sphere</span>
                         </h1>
                     </a>
                 </div>
@@ -247,11 +250,14 @@
                 <!-- Right Section - Notifications and Profile -->
                 <div class="flex items-center gap-4">
                     
-                    <!-- Profile Dropdown (simplified) -->
+                    <!-- Profile Dropdown -->
                     <div class="relative" id="profileDropdown">
-                        <button id="profileBtn" class="flex items-center gap-3 pl-2 pr-3 py-1.5 bg-slate-100 rounded-lg cursor-pointer hover:bg-slate-200 transition-colors">
-                            <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                                <span class="text-white text-sm font-semibold">
+                        <button id="profileBtn" class="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full hover:bg-slate-100 transition-colors">
+                            {% if user.is_authenticated and user.std_pic %}
+                            <img src="{{ user.std_pic.url }}" alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-sm bg-white border border-slate-200">
+                            {% else %}
+                            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white shadow-sm">
+                                <span class="text-xs font-semibold">
                                     {% if user.is_authenticated %}
                                         {{ user.first_name|first|default:user.username|first|upper }}
                                     {% else %}
@@ -259,8 +265,9 @@
                                     {% endif %}
                                 </span>
                             </div>
+                            {% endif %}
                             <div class="hidden sm:block text-left">
-                                <p class="text-sm font-semibold text-slate-900">
+                                <p class="text-sm font-semibold text-slate-700">
                                     {% if user.is_authenticated %}
                                         {{ user.get_full_name|default:user.username }}
                                     {% else %}
@@ -272,13 +279,11 @@
                         </button>
 
                         <!-- Dropdown Menu -->
-                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 hidden opacity-0 translate-y-0 transition-all duration-300 z-50">
-                            <div class="py-1">
-                                <hr class="my-1 border-slate-100">
-                                <button onclick="showLogoutModal()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                    <i class="bi bi-box-arrow-right mr-2"></i>Logout
-                                </button>
-                            </div>
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-xl hidden opacity-0 translate-y-2 transition-all duration-200 z-50 shadow-lg border border-slate-100 py-1">
+                            <button onclick="showLogoutModal()" class="w-full text-left px-4 py-2.5 text-sm text-red-600 font-medium hover:bg-red-50 flex items-center gap-2 transition-colors">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Sign out
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -292,13 +297,16 @@
     <!-- Sidebar and Main Content Container -->
     <div class="flex">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-slate-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50 lg:z-0 overflow-y-auto" style="height: calc(100vh - 4rem); top: 4rem;">
+        <aside id="sidebar" class="sidebar fixed lg:sticky top-16 inset-y-0 left-0 w-64 transform -translate-x-full lg:translate-x-0 z-50 lg:z-0 overflow-y-auto" style="height: calc(100vh - 4rem);">
             <div class="p-4">
                 <!-- User Info (Mobile only) -->
-                <div class="lg:hidden mb-6 pb-4 border-b border-slate-200">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
-                            <span class="text-white text-lg font-semibold">
+                <div class="lg:hidden mb-6 pb-6 border-b border-slate-200">
+                    <div class="flex items-center gap-3 px-2">
+                        {% if user.is_authenticated and user.std_pic %}
+                        <img src="{{ user.std_pic.url }}" alt="Profile" class="w-12 h-12 rounded-full object-cover shadow-sm bg-white border border-slate-200">
+                        {% else %}
+                        <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white shadow-sm">
+                            <span class="text-lg font-semibold">
                                 {% if user.is_authenticated %}
                                     {{ user.first_name|first|default:user.username|first|upper }}
                                 {% else %}
@@ -306,6 +314,7 @@
                                 {% endif %}
                             </span>
                         </div>
+                        {% endif %}
                         <div>
                             <p class="font-semibold text-slate-900">
                                 {% if user.is_authenticated %}
@@ -320,60 +329,60 @@
                 </div>
 
                 <!-- Sidebar Navigation Links -->
-                <nav class="space-y-1">
+                <nav class="space-y-1 mt-2">
                     <a href="{% url 'student_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
-                        <i class="bi bi-house-door"></i>
+                        <i class="bi bi-grid-1x2"></i>
                         <span>Dashboard</span>
                     </a>
                     
                     <a href="{% url 'purchase_course' %}" class="sidebar-link {% if request.resolver_match.url_name == 'purchase_course' %}active{% endif %}">
-                        <i class="bi bi-cart"></i>
-                        <span>Purchase Course</span>
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>Courses</span>
                         {% if purchase_cart_count %}
-                            <span class="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">{{ purchase_cart_count }}</span>
+                            <span class="ml-auto bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">{{ purchase_cart_count }}</span>
                         {% endif %}
                     </a>
                     
                     <a href="{% url 'profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                         <i class="bi bi-person"></i>
-                        <span>My Profile</span>
+                        <span>Profile</span>
                     </a>
                 </nav>
 
                 <!-- Logout Button (Mobile only) -->
-                <div class="lg:hidden mt-8 pt-4 border-t border-slate-200">
-                    <button onclick="showLogoutModal()" class="sidebar-link w-full text-red-600 hover:bg-red-50">
+                <div class="lg:hidden mt-8 pt-6 border-t border-slate-200">
+                    <button onclick="showLogoutModal()" class="sidebar-link w-full text-red-600 hover:bg-red-50 hover:text-red-700">
                         <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
+                        <span>Sign Out</span>
                     </button>
                 </div>
 
                 <!-- Version Info -->
-                <div class="mt-8 text-center">
-                    <p class="text-xs text-slate-400">© 2024 StudentManage</p>
-                    <p class="text-xs text-slate-400">v1.0</p>
+                <div class="mt-8 px-4">
+                    <p class="text-xs font-medium text-slate-400">EduSphere v2.0</p>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content flex-1 min-w-0">
-            <!-- Page Header (Optional) -->
-        
-
             <!-- Content Block -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-8">
                 <!-- Django Messages -->
                 {% if messages %}
+                    <div class="space-y-3 mb-8">
                     {% for message in messages %}
-                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %} flex items-start gap-3">
-                        <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-circle-fill{% else %}bi-info-circle-fill{% endif %} text-lg mt-0.5"></i>
-                        <p class="flex-1">{{ message }}</p>
-                        <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
-                            <i class="bi bi-x"></i>
+                    <div class="p-4 rounded-xl flex items-start gap-3 shadow-sm {% if message.tags == 'success' %}bg-green-50 text-green-800 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-50 text-red-800 border-l-4 border-red-500{% else %}bg-blue-50 text-blue-800 border-l-4 border-blue-500{% endif %}">
+                        <div class="mt-0.5">
+                            <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-circle-fill{% else %}bi-info-circle-fill{% endif %} text-lg"></i>
+                        </div>
+                        <p class="flex-1 font-medium">{{ message }}</p>
+                        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="bi bi-x-lg"></i>
                         </button>
                     </div>
                     {% endfor %}
+                    </div>
                 {% endif %}
 
                 {% block content %}{% endblock %}
@@ -381,10 +390,15 @@
         </main>
     </div>
 
-    <!-- Footer (Simplified) -->
-    <footer class="border-t border-slate-200 py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p class="text-sm text-slate-500 text-center">© 2024 Student Management System. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 py-6 bg-white mt-auto relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-slate-500">© 2024 EduSphere. All rights reserved.</p>
+            <div class="flex items-center gap-4 text-slate-400">
+                <a href="#" class="hover:text-red-600 transition-colors"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="hover:text-red-600 transition-colors"><i class="bi bi-github"></i></a>
+                <a href="#" class="hover:text-red-600 transition-colors"><i class="bi bi-linkedin"></i></a>
+            </div>
         </div>
     </footer>
 
@@ -420,12 +434,19 @@
                 profileBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     dropdownMenu.classList.toggle('hidden');
-                    dropdownMenu.classList.toggle('opacity-0');
+                    // Small delay for animation
+                    setTimeout(() => {
+                        dropdownMenu.classList.toggle('opacity-0');
+                        dropdownMenu.classList.toggle('translate-y-2');
+                    }, 10);
                 });
 
                 document.addEventListener('click', (e) => {
                     if (!profileBtn.contains(e.target) && !dropdownMenu?.contains(e.target)) {
-                        dropdownMenu.classList.add('hidden', 'opacity-0');
+                        dropdownMenu.classList.add('opacity-0', 'translate-y-2');
+                        setTimeout(() => {
+                            dropdownMenu.classList.add('hidden');
+                        }, 200);
                     }
                 });
             }
@@ -448,24 +469,24 @@
             const toast = document.createElement('div');
             
             const colors = {
-                success: 'bg-green-50 border-green-200 text-green-800',
-                error: 'bg-red-50 border-red-200 text-red-800',
-                warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-                info: 'bg-blue-50 border-blue-200 text-blue-800'
+                success: 'bg-white border-l-4 border-green-500 text-slate-700',
+                error: 'bg-white border-l-4 border-red-500 text-slate-700',
+                warning: 'bg-white border-l-4 border-yellow-400 text-slate-700',
+                info: 'bg-white border-l-4 border-blue-500 text-slate-700'
             };
             
             const icons = {
-                success: 'bi-check-circle-fill',
-                error: 'bi-exclamation-circle-fill',
-                warning: 'bi-exclamation-triangle-fill',
-                info: 'bi-info-circle-fill'
+                success: 'bi-check-circle-fill text-green-500',
+                error: 'bi-x-circle-fill text-red-500',
+                warning: 'bi-exclamation-triangle-fill text-yellow-400',
+                info: 'bi-info-circle-fill text-blue-500'
             };
             
-            toast.className = `toast flex items-center gap-3 p-4 rounded-xl border ${colors[type]} shadow-lg mb-3`;
+            toast.className = `toast flex items-center gap-3 p-4 rounded-lg shadow-lg mb-3 ${colors[type]}`;
             toast.innerHTML = `
                 <i class="bi ${icons[type]} text-lg"></i>
                 <p class="flex-1 text-sm font-medium">${message}</p>
-                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600">
                     <i class="bi bi-x"></i>
                 </button>
             `;
@@ -473,14 +494,10 @@
             toastContainer?.appendChild(toast);
             
             setTimeout(() => {
-                toast.remove();
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
             }, 5000);
         }
-
-        // Notification button click
-        document.getElementById('notificationBtn')?.addEventListener('click', () => {
-            showToast('You have 3 new notifications', 'info');
-        });
 
         // Logout Modal Functions
         function showLogoutModal() {
@@ -525,10 +542,14 @@
 
         // Form submit loading
         document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', showLoading);
+            form.addEventListener('submit', function() {
+                // Don't show loading on search forms to prevent flicker
+                if (this.method.toLowerCase() !== 'get') {
+                    showLoading();
+                }
+            });
         });
     </script>
-
     {% block extra_js %}{% endblock %}
 </body>
 </html>

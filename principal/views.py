@@ -12,6 +12,10 @@ def principal_dashboard(request):
         status='PENDING'
     ).select_related('student__std_dept', 'course__department')
 
+    rejected_requests = StudentCourse.objects.filter(
+        status='REJECTED'
+    ).select_related('student', 'course').order_by('-purchased_at')[:5]
+
     pending_count  = pending_requests.count()
     total_approved = StudentCourse.objects.filter(status='APPROVED').count()
     total_rejected = StudentCourse.objects.filter(status='REJECTED').count()
@@ -27,7 +31,7 @@ def principal_dashboard(request):
         'total_rejected':    total_rejected,
         'total_requests':    total_requests,
         'recent_students':   Student.objects.select_related('std_dept').filter(role='STUDENT').order_by('-date_joined')[:5],
-        'recent_courses':    AddOnCourse.objects.select_related('department').order_by('-id')[:5],
+        'rejected_requests': rejected_requests,
     }
     return render(request, 'principal/principal_dashboard.html', context)
 

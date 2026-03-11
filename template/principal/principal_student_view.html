@@ -12,23 +12,31 @@
 {% block content %}
 
 <!-- Back Button + Header -->
-<div class="flex items-center gap-4 mb-6">
-    <a href="{% url 'view_students' %}"
-       class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900">Student Detail</h1>
-        <p class="text-slate-500 text-sm mt-0.5">Full profile and course enrollment history</p>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+    <div class="flex items-center gap-4">
+        <div class="p-3.5 rounded-xl shadow-lg shadow-indigo-200" style="background: var(--primary-gradient);">
+            <i class="bi bi-person-vcard text-white text-2xl"></i>
+        </div>
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-800 outfit-font tracking-tight">Student Detail</h1>
+            <p class="text-slate-500 text-sm font-medium mt-1.5">Full profile and course enrollment history</p>
+        </div>
     </div>
+    <a href="{% url 'view_students' %}"
+       class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm">
+        <i class="bi bi-arrow-left"></i> Back to Directory
+    </a>
 </div>
 
 <!-- Top Grid: Profile + Stats -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
     <!-- Profile Card -->
-    <div class="dashboard-card rounded-xl p-6 flex flex-col items-center text-center">
-        <div class="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden mb-4
+    <div class="dashboard-card rounded-[1.5rem] p-8 flex flex-col items-center text-center relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-100 rounded-full blur-3xl opacity-50 transition-opacity"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-purple-100 rounded-full blur-3xl opacity-50 transition-opacity"></div>
+        
+        <div class="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden mb-5 shadow-xl border-4 border-white relative z-10
                     {% if not student.std_pic %}bg-slate-700{% endif %}">
             {% if student.std_pic %}
                 <img src="{{ student.std_pic.url }}" class="w-full h-full object-cover" alt="{{ student.first_name }}">
@@ -36,9 +44,9 @@
                 <span class="text-white text-3xl font-bold">{{ student.first_name|first|upper }}</span>
             {% endif %}
         </div>
-        <h2 class="text-xl font-bold text-slate-900">{{ student.first_name }} {{ student.last_name }}</h2>
-        <span class="mt-1 px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full">
-            {{ student.std_reg_no }}
+        <h2 class="text-2xl font-extrabold text-slate-800 outfit-font relative z-10">{{ student.first_name }} {{ student.last_name }}</h2>
+        <span class="mt-2 px-3 py-1 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 text-xs font-bold uppercase tracking-wider rounded-md border border-indigo-100 relative z-10">
+            Reg No: {{ student.std_reg_no }}
         </span>
 
         <div class="w-full mt-6 space-y-3 text-left">
@@ -100,16 +108,16 @@
 
 <!-- Pending Courses — needs action -->
 {% if pending_courses %}
-<div class="dashboard-card rounded-xl overflow-hidden mb-6">
-    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-100">
-        <div class="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center">
-            <i class="bi bi-hourglass-split text-amber-600"></i>
+<div class="dashboard-card rounded-[1.5rem] overflow-hidden mb-8 border border-amber-200/60 shadow-md">
+    <div class="flex items-center gap-4 px-6 py-5 border-b border-amber-100 bg-amber-50/50">
+        <div class="w-10 h-10 bg-amber-100 shadow-sm rounded-xl flex items-center justify-center">
+            <i class="bi bi-hourglass-split text-amber-600 text-xl"></i>
         </div>
         <div class="flex-1">
-            <h3 class="text-base font-bold text-slate-900">Pending Approvals</h3>
-            <p class="text-xs text-amber-600">{{ pending_count }} course{{ pending_count|pluralize }} awaiting your action</p>
+            <h3 class="text-lg font-extrabold text-slate-800 outfit-font">Pending Approvals</h3>
+            <p class="text-xs text-amber-600 font-bold uppercase tracking-wider mt-0.5">{{ pending_count }} course{{ pending_count|pluralize }} awaiting your action</p>
         </div>
-        <span class="w-7 h-7 bg-amber-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+        <span class="w-8 h-8 bg-amber-500 text-white text-sm font-bold rounded-lg flex items-center justify-center shadow-md">
             {{ pending_count }}
         </span>
     </div>

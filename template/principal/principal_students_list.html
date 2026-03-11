@@ -4,171 +4,208 @@
 
 {% block extra_css %}
 <style>
-    .student-row { transition: all 0.2s ease; }
-    .student-row:hover td { background: #f8fafc; }
-    .search-input:focus { box-shadow: 0 0 0 3px rgba(100,116,139,0.15); }
+    .student-row { transition: background-color 0.2s ease; }
+    .student-row:hover { background-color: #f8fafc; }
+    /* Hide scrollbar for search/filter inputs but keep functionality */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900">View Students</h1>
-        <p class="text-slate-500 text-sm mt-1">Manage and view all registered students</p>
+<!-- Page Header -->
+<div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="bi bi-people-fill text-2xl"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 outfit-font tracking-tight">Student Directory</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Manage and view all registered students</p>
+        </div>
     </div>
 </div>
 
-<div class="dashboard-card p-4 mb-8">
+<!-- Search & Filter Bar -->
+<div class="bg-white p-4 md:p-5 mb-8 rounded-2xl shadow-sm border border-slate-200">
     <form method="GET" action="{% url 'view_students' %}">
-        <div class="flex gap-3">
+        <div class="flex flex-col lg:flex-row gap-4">
+            
             <div class="relative flex-1">
-                <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-slate-400"></i>
+                </div>
                 <input type="text"
                        name="q"
                        value="{{ search_query|default:'' }}"
-                       placeholder="Search students by name, email, or roll number..."
-                       class="search-input w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 transition-all bg-white">
+                       placeholder="Search by name, email, or registration number..."
+                       class="block w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-slate-50 focus:bg-white">
             </div>
-            <div class="relative">
-                <select name="dept"
-                        onchange="this.form.submit()"
-                        class="pl-4 pr-10 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 bg-white appearance-none cursor-pointer transition-all min-w-[160px]">
-                    <option value="">All Departments</option>
-                    {% for dept in departments %}
-                    <option value="{{ dept.pk }}" {% if dept_filter == dept.pk|stringformat:'s' %}selected{% endif %}>
-                        {{ dept.dept_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-                <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative min-w-[200px]">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <i class="bi bi-funnel text-slate-400"></i>
+                    </div>
+                    <select name="dept"
+                            onchange="this.form.submit()"
+                            class="block w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors bg-slate-50 focus:bg-white appearance-none cursor-pointer text-ellipsis">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.pk }}" {% if dept_filter == dept.pk|stringformat:'s' %}selected{% endif %}>
+                            {{ dept.dept_name }} 
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                        <i class="bi bi-chevron-down text-slate-400 text-[10px]"></i>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-xl hover:bg-slate-800 transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
+                        Search
+                    </button>
+                    {% if search_query or dept_filter %}
+                    <a href="{% url 'view_students' %}" class="inline-flex items-center justify-center px-4 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-50 hover:text-red-600 transition-colors shadow-sm tooltip" title="Clear Filters">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    {% endif %}
+                </div>
             </div>
-            <button type="submit"
-                    class="flex items-center gap-2 px-6 py-3 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors">
-                <i class="bi bi-search"></i> Search
-            </button>
-            {% if search_query or dept_filter %}
-            <a href="{% url 'view_students' %}"
-               class="flex items-center gap-2 px-4 py-3 bg-slate-100 text-slate-600 text-sm font-medium rounded-xl hover:bg-slate-200 transition-colors">
-                <i class="bi bi-x-lg"></i> Clear
-            </a>
-            {% endif %}
+
         </div>
     </form>
 </div>
 
-<div class="dashboard-card overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+<!-- Data Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    
+    <!-- Table Header -->
+    <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
         <div class="flex items-center gap-3">
-            <i class="bi bi-people-fill text-slate-700 text-xl"></i>
-            <div>
-                <h3 class="text-base font-bold text-slate-900">All Registered Students</h3>
-                {% if search_query %}
-                <p class="text-xs text-slate-500">Results for "{{ search_query }}"</p>
-                {% endif %}
-            </div>
+            <h3 class="text-base font-bold text-slate-800 outfit-font">Students List</h3>
+            <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">
+                Total: {{ total }}
+            </span>
         </div>
-        <span class="px-4 py-1.5 bg-slate-100 text-slate-700 text-sm font-bold rounded-full">
-            {{ total }} student{{ total|pluralize }}
-        </span>
+        {% if search_query %}
+        <p class="text-xs text-slate-500 font-medium">Looking for <span class="text-slate-900 font-semibold">"{{ search_query }}"</span></p>
+        {% endif %}
     </div>
 
-    <div class="overflow-x-auto">
-        <table class="principal-table">
+    <!-- Table -->
+    <div class="overflow-x-auto no-scrollbar pb-2">
+        <table class="w-full text-left border-collapse">
             <thead>
                 <tr>
-                    <th>Reg No</th>
-                    <th>Student Name</th>
-                    <th>Department</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Registered</th>
-                    <th>Actions</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Student</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Reg No</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Department</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Contact</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">Joined</th>
+                    <th class="px-6 py-3 border-b border-slate-100 bg-white text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap text-right">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100">
                 {% for student in students %}
-                <tr class="student-row">
-                    <td>
-                        <span class="text-sm font-mono bg-slate-100 px-3 py-1 rounded-lg text-slate-700 font-semibold">
-                            {{ student.std_reg_no|default:"—" }}
-                        </span>
-                    </td>
-                    <td>
+                <tr class="student-row group">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden
-                                        {% if not student.std_pic %}bg-slate-600{% endif %}">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-slate-100 text-slate-600 font-bold text-sm border border-slate-200">
                                 {% if student.std_pic %}
-                                    <img src="{{ student.std_pic.url }}" class="w-full h-full object-cover" alt="{{ student.first_name }}">
+                                    <img src="{{ student.std_pic.url }}" class="w-full h-full object-cover" alt="Avatar">
                                 {% else %}
-                                    <span class="text-white text-sm font-bold">{{ student.first_name|first|upper }}</span>
+                                    {{ student.first_name|first|upper }}
                                 {% endif %}
                             </div>
-                            <span class="font-semibold text-slate-900 text-sm">
-                                {{ student.first_name }} {{ student.last_name }}
-                            </span>
+                            <div>
+                                <p class="text-sm font-semibold text-slate-900 group-hover:text-red-600 transition-colors">
+                                    {{ student.first_name }} {{ student.last_name }}
+                                </p>
+                            </div>
                         </div>
                     </td>
-                    <td>
-                        {% if student.std_dept %}
-                            <span class="badge badge-slate">{{ student.std_dept.dept_name|upper }}</span>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if student.std_reg_no %}
+                        <span class="inline-flex items-center px-2 py-1 text-xs font-mono font-medium rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+                            {{ student.std_reg_no }}
+                        </span>
                         {% else %}
-                            <span class="text-slate-400 text-xs">—</span>
+                        <span class="text-slate-400 text-sm">—</span>
                         {% endif %}
                     </td>
-                    <td><span class="text-sm text-slate-600">{{ student.email }}</span></td>
-                    <td><span class="text-sm text-slate-600">{{ student.std_phone_no|default:"N/A" }}</span></td>
-                    <td>
-                        <p class="text-sm text-slate-700">{{ student.date_joined|date:"d M Y" }}</p>
-                        <p class="text-xs text-slate-400">{{ student.date_joined|timesince }} ago</p>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="text-sm text-slate-600 font-medium">
+                            {{ student.std_dept.dept_name|default:"<span class='text-slate-400 text-xs italic'>Not assigned</span>"|safe }}
+                        </span>
                     </td>
-                    <td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-0.5">
+                            <a href="mailto:{{ student.email }}" class="text-sm text-slate-600 hover:text-red-600 transition-colors flex items-center gap-1.5">
+                                <i class="bi bi-envelope text-slate-400"></i> {{ student.email }}
+                            </a>
+                            {% if student.std_phone_no %}
+                            <a href="tel:{{ student.std_phone_no }}" class="text-xs text-slate-500 hover:text-red-600 transition-colors flex items-center gap-1.5">
+                                <i class="bi bi-telephone text-slate-400"></i> {{ student.std_phone_no }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-sm text-slate-700">{{ student.date_joined|date:"d M Y" }}</span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-wider">{{ student.date_joined|timesince }} ago</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
                         <a href="{% url 'student_detail' student.pk %}"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition-colors">
-                            <i class="bi bi-eye"></i> View Details
+                           class="inline-flex items-center justify-center px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 hover:text-red-600 hover:border-red-200 transition-all shadow-sm">
+                            View Details
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7">
-                        <div class="text-center py-16">
-                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="bi bi-people text-slate-400 text-2xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-slate-500 mb-1">No students found</h4>
-                            <p class="text-sm text-slate-400">
-                                {% if search_query %}No results for "{{ search_query }}" — try a different search
-                                {% else %}No students have registered yet{% endif %}
-                            </p>
-                            {% if search_query %}
-                            <a href="{% url 'view_students' %}"
-                               class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-900 text-white text-sm rounded-lg hover:bg-slate-800 transition-colors">
-                                <i class="bi bi-x"></i> Clear Search
-                            </a>
-                            {% endif %}
+                    <td colspan="6" class="px-6 py-16 text-center">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                            <i class="bi bi-search text-slate-300 text-2xl"></i>
                         </div>
+                        <h4 class="text-base font-semibold text-slate-800 mb-1">No students found</h4>
+                        <p class="text-sm text-slate-500 max-w-sm mx-auto">
+                            {% if search_query %}We couldn't find any students matching your search criteria. Try a different term or clear filters.
+                            {% else %}There are currently no students registered in the system.{% endif %}
+                        </p>
+                        {% if search_query or dept_filter %}
+                        <div class="mt-6">
+                            <a href="{% url 'view_students' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-medium rounded-xl transition-colors">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                            </a>
+                        </div>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
+    
+    <!-- Table Footer Stats -->
     {% if students %}
-    <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+    <div class="bg-slate-50 border-t border-slate-100 px-6 py-3 flex items-center justify-between">
         <p class="text-xs text-slate-500">
-            Showing <span class="font-semibold text-slate-700">{{ total }}</span> student{{ total|pluralize }}
-            {% if search_query %}matching "{{ search_query }}"{% endif %}
+            End of list.
         </p>
-        <div class="flex items-center gap-4 text-xs text-slate-500">
-            <span class="flex items-center gap-1">
-                <span class="w-2 h-2 bg-slate-700 rounded-full"></span>
-                {{ total_approved_students }} with approved courses
+        <div class="flex items-center gap-x-6 text-xs text-slate-500">
+            <span class="flex items-center gap-1.5" title="Students with at least one approved course">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                <span class="font-medium text-slate-700">{{ total_approved_students }}</span> Active
             </span>
         </div>
     </div>
     {% endif %}
+
 </div>
 
 {% endblock %}
